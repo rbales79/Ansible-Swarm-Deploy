@@ -1,5 +1,4 @@
 version: '3.3'
-
 services:
   consul-leader:
     image: consul
@@ -14,7 +13,7 @@ services:
       - traefik-public
     deploy:
       labels:
-        - traefik.frontend.rule=Host:consul.rlab.local
+        - traefik.frontend.rule=Host:consul.${DOMAIN}
         - traefik.enable=true
         - traefik.port=8500
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
@@ -24,7 +23,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=admin:admin
+        - traefik.frontend.auth.basic.users=${USERNAME}:${HASHED_PASSWORD}
   consul-replica:
     image: consul
     command: agent -server -client=0.0.0.0 -retry-join="consul-leader"
@@ -37,7 +36,7 @@ services:
       - default
       - traefik-public
     deploy:
-      replicas: 3
+      replicas: ${CONSUL_REPLICAS:-3}
       placement:
         preferences:
           - spread: node.id
@@ -47,14 +46,14 @@ services:
       - 80:80
       - 443:443
     deploy:
-      replicas: 3
+      replicas: ${TRAEFIK_REPLICAS:-3}
       placement:
         constraints:
           - node.role == manager
         preferences:
           - spread: node.id
       labels:
-        - traefik.frontend.rule=Host:traefik.rlab.local
+        - traefik.frontend.rule=Host:traefik.${DOMAIN}
         - traefik.enable=true
         - traefik.port=8080
         - traefik.tags=traefik-public
@@ -64,7 +63,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=admin:admin
+        - traefik.frontend.auth.basic.users=${USERNAME}:${HASHED_PASSWORD}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: >
@@ -78,7 +77,7 @@ services:
       --consul
       --consul.endpoint="consul-leader:8500"
       --acme
-      --acme.email=rbales79@gmail.com
+      --acme.email=${EMAIL}
       --acme.storage="traefik/acme/account"
       --acme.entryPoint=https
       --acme.httpChallenge.entryPoint=http
@@ -96,7 +95,6 @@ services:
 volumes:
   consul-data-leader:
   consul-data-replica:
-
 networks:
   traefik-public:
     external: true
