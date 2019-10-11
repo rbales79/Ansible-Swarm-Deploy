@@ -1,42 +1,62 @@
 --- 
 networks: 
-  public: 
-    driver: overlay
-    name: public
+  traefik-net: ~
 services: 
-  traefik: 
-    command: "--api --acme --acme.storage=/certs/acme.json --acme.entryPoint=https --acme.httpChallenge.entryPoint=http --acme.onHostRule=true --acme.onDemand=false --acme.acmelogging=true --acme.email=${EMAIL:-root@localhost} --docker --docker.swarmMode --docker.domain=${DOMAIN:-localhost} --docker.watch --defaultentrypoints=http,https --entrypoints='Name:http Address::80' --entrypoints='Name:https Address::443 TLS' --logLevel=INFO --accessLog --metrics --metrics.prometheus\n"
+  mongodb: 
+    deploy: 
+      replicas: 1
+    image: mongo
+    networks: 
+      - traefik-net
+    ports: 
+      - "27017:27017"
+    volumes: 
+      - "mongodata:/data/db"
+  ms1: 
+    depends_on: 
+      - mongodb
     deploy: 
       labels: 
-        - traefik.docker.network=public
-        - traefik.port=8080
-        - traefik.backend=traefik
         - traefik.enable=true
-        - "traefik.frontend.rule=Host:traefik.${DOMAIN:-localhost}"
-        - "traefik.frontend.entryPoints=http,https"
-      mode: replicated
+        - traefik.port=8080
+        - traefik.docker.network=mystack_traefik-net
+        - "traefik.frontend.rule=Host:ms1.traefik.kb"
+      replicas: 3
+    image: melvindave/spring-boot-example
+    networks: 
+      - traefik-net
+  portainer: 
+    deploy: 
+      labels: 
+        - traefik.enable=true
+        - traefik.port=9000
+        - traefik.docker.network=mystack_traefik-net
+        - "traefik.frontend.rule=Host:portainer.traefik.kb"
       placement: 
         constraints: 
           - "node.role == manager"
-      replicas: 1
-      restart_policy: 
-        condition: on-failure
-      update_config: 
-        delay: 10s
-        parallelism: 1
-    image: "traefik:1.7.13"
+    image: portainer/portainer
     networks: 
-      - public
-    ports: 
-      - 
-        mode: host
-        published: 80
-        target: 80
-      - 
-        mode: host
-        published: 443
-        target: 443
+      - traefik-net
     volumes: 
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./traefik:/etc/traefik"
-version: "3.7"
+      - "portainerdata:/data"
+  traefik: 
+    command: "--web \\ --docker \\ --docker.swarmmode \\ --docker.domain=traefik.kb \\ --docker.watch \\ --logLevel=DEBUG"
+    deploy: 
+      placement: 
+        constraints: 
+          - node.role==manager
+    image: traefik
+    networks: 
+      - traefik-net
+    ports: 
+      - "80:80"
+      - "8080:8080"
+    volumes: 
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/dev/null:/traefik.toml"
+version: "3.3"
+volumes: 
+  mongodata: ~
+  portainerdata: ~
