@@ -1,62 +1,102 @@
---- 
-networks: 
-  traefik-net: ~
-services: 
-  mongodb: 
-    deploy: 
-      replicas: 1
-    image: mongo
-    networks: 
-      - traefik-net
-    ports: 
-      - "27017:27017"
-    volumes: 
-      - "mongodata:/data/db"
-  ms1: 
-    depends_on: 
-      - mongodb
-    deploy: 
-      labels: 
+version: '3.3'
+
+services:
+  consul-leader:
+    image: consul
+    command: agent -server -client=0.0.0.0 -bootstrap -ui
+    volumes:
+      - consul-data-leader:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:consul.rlab.local
+        - traefik.enable=true
+        - traefik.port=8500
+        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+        - traefik.frontend.auth.basic.users=admin:admin
+  consul-replica:
+    image: consul
+    command: agent -server -client=0.0.0.0 -retry-join="consul-leader"
+    volumes:
+      - consul-data-replica:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      replicas: 3
+      placement:
+        preferences:
+          - spread: node.id
+  traefik:
+    image: traefik:v1.7
+    ports:
+      - 80:80
+      - 443:443
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == manager
+        preferences:
+          - spread: node.id
+      labels:
+        - traefik.frontend.rule=Host:traefik.rlab.local
         - traefik.enable=true
         - traefik.port=8080
-        - traefik.docker.network=mystack_traefik-net
-        - "traefik.frontend.rule=Host:ms1.traefik.kb"
-      replicas: 3
-    image: melvindave/spring-boot-example
-    networks: 
-      - traefik-net
-  portainer: 
-    deploy: 
-      labels: 
-        - traefik.enable=true
-        - traefik.port=9000
-        - traefik.docker.network=mystack_traefik-net
-        - "traefik.frontend.rule=Host:portainer.traefik.kb"
-      placement: 
-        constraints: 
-          - "node.role == manager"
-    image: portainer/portainer
-    networks: 
-      - traefik-net
-    volumes: 
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "portainerdata:/data"
-  traefik: 
-    command: "--web \\ --docker \\ --docker.swarmmode \\ --docker.domain=traefik.kb \\ --docker.watch \\ --logLevel=DEBUG"
-    deploy: 
-      placement: 
-        constraints: 
-          - node.role==manager
-    image: traefik
-    networks: 
-      - traefik-net
-    ports: 
-      - "80:80"
-      - "8080:8080"
-    volumes: 
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/dev/null:/traefik.toml"
-version: "3.3"
-volumes: 
-  mongodata: ~
-  portainerdata: ~
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+        - traefik.frontend.auth.basic.users=admin:admin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      --docker
+      --docker.swarmmode
+      --docker.watch
+      --docker.exposedbydefault=false
+      --constraints=tag==traefik-public
+      --entrypoints='Name:http Address::80'
+      --entrypoints='Name:https Address::443 TLS'
+      --consul
+      --consul.endpoint="consul-leader:8500"
+      --acme
+      --acme.email=rbales79@gmail.com
+      --acme.storage="traefik/acme/account"
+      --acme.entryPoint=https
+      --acme.httpChallenge.entryPoint=http
+      --acme.onhostrule=true
+      --acme.acmelogging=true
+      --logLevel=INFO
+      --accessLog
+      --api
+    networks:
+      - default
+      - traefik-public
+    depends_on:
+      - consul-leader
+        
+volumes:
+  consul-data-leader:
+  consul-data-replica:
+
+networks:
+  traefik-public:
+    external: true
