@@ -1,0 +1,9 @@
+---
+- hosts: manager[0]
+  become: true
+  tasks:
+    - name: Download Traefik Stack File
+      shell: curl -L https://github.com/rbales79/Docker-Swarm-Traefik/blob/master/traefik-stack.yml -o traefik-stack.yml
+
+    - name: Install Traefik
+      shell: docker stack deploy --compose-file=traefik-stack.yml Traefik
