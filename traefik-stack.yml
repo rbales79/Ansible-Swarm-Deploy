@@ -1,24 +1,63 @@
-version: 3.3
+# Define which version of docker-compose file you are using.
+version: '3.7'
+
+# Traefik Docker Stack for Docker Swarm.
 services:
+  # Traefik Reverse-Proxy Service
   traefik:
     image: traefik
-    command: --web \
-      --docker \
-      --docker.swarmmode \
-      --docker.domain=rlab.local \
-      --docker.watch \
-      --logLevel=DEBUG
     networks:
-      - traefik-net
+      - traefik-proxy-network
     ports:
       - 80:80
-      - 8080:8080
+      - 443:443
+    # These options are only used in Docker Swarm via docker stack deploy.
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.frontend.rule=Host:traefik.rlab.local
+        - traefik.enable=true
+        - traefik.port=8080
+        - traefik.docker.network=proxy-net
+    # Note: It is know to big a vulnerability to mount Docker host Docker socket into a container
+    # because this can give container root user access to root user in host. There are workarounds
+    # to make Traefik work without this, but then the automatic service discovery doesn't work and
+    # you have to manually configure Traefik.
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /dev/null:/traefik.toml
-    deploy:
-      placement:
-        constraints: [node.role==manager]
+      - ./traefik:/etc/traefik
+    # Note: The --acme.tlsChallenge flag may be different for everyone's use case
+    # and may require other flags.
+    # I suggest looking through the Traefik Documentation to decide which kind of
+    # ACME Challenge is best for you.
+    # https://docs.traefik.io/configuration/acme/#acme-challenge
+    command: >
+      --docker
+      --docker.swarmmode
+      --docker.watch
+      --docker.exposedbydefault=false
+      --api
+      --logLevel=INFO
+      --accessLog
+      --accessLog.filePath=/etc/traefik/logs/access.log
+      --accessLog.format=json
+      --traefikLog
+      --traefikLog.filePath=/etc/traefik/logs/traefik.log
+      --traefikLog.format=json
+      --acme
+      --acme.email=${EMAIL}
+      --acme.storage="/etc/traefik/acme.json"
+      --acme.entrypoint=https
+      --acme.tlsChallenge
+      --acme.onhostrule=true
+      --acme.acmelogging=true
+# Traefik Docker Networks for Docker Swarm
+networks:
+  traefik-proxy-network:
+    name: proxy-net
  
   portainer:
     image: portainer/portainer
@@ -60,10 +99,7 @@ services:
       replicas: 1
     ports:
       - 27017:27017 
- 
-networks:
-  traefik-net:
- 
+      
 volumes:
    portainerdata:
    mongodata:
