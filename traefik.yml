@@ -5,6 +5,8 @@
     - name: Download Traefik Stack File
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/docker-compose.traefik.yml -o docker-compose.traefik.yml
+        curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+        docker stack deploy --compose-file=portainer-agent-stack.yml portainer
         docker network create --driver=overlay traefik-public
         export EMAIL=rbales79@gmail.com
         export DOMAIN=rlab.local
@@ -13,4 +15,4 @@
         export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
         export CONSUL_REPLICAS=3
         export TRAEFIK_REPLICAS=3
-        docker stack deploy --compose-file=docker-compose.traefik.yml Traefik-Portainer
+        docker stack deploy --compose-file=docker-compose.traefik.yml Traefik-Consul
