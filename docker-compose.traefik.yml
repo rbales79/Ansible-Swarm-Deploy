@@ -1,0 +1,42 @@
+--- 
+networks: 
+  public: 
+    driver: overlay
+    name: public
+services: 
+  traefik: 
+    command: "--api --acme --acme.storage=/certs/acme.json --acme.entryPoint=https --acme.httpChallenge.entryPoint=http --acme.onHostRule=true --acme.onDemand=false --acme.acmelogging=true --acme.email=${EMAIL:-root@localhost} --docker --docker.swarmMode --docker.domain=${DOMAIN:-localhost} --docker.watch --defaultentrypoints=http,https --entrypoints='Name:http Address::80' --entrypoints='Name:https Address::443 TLS' --logLevel=INFO --accessLog --metrics --metrics.prometheus\n"
+    deploy: 
+      labels: 
+        - traefik.docker.network=public
+        - traefik.port=8080
+        - traefik.backend=traefik
+        - traefik.enable=true
+        - "traefik.frontend.rule=Host:traefik.${DOMAIN:-localhost}"
+        - "traefik.frontend.entryPoints=http,https"
+      mode: replicated
+      placement: 
+        constraints: 
+          - "node.role == manager"
+      replicas: 1
+      restart_policy: 
+        condition: on-failure
+      update_config: 
+        delay: 10s
+        parallelism: 1
+    image: "traefik:1.7.13"
+    networks: 
+      - public
+    ports: 
+      - 
+        mode: host
+        published: 80
+        target: 80
+      - 
+        mode: host
+        published: 443
+        target: 443
+    volumes: 
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./traefik:/etc/traefik"
+version: "3.7"
