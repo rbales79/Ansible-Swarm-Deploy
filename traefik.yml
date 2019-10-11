@@ -3,7 +3,7 @@
   become: true
   tasks:
     - name: Download Traefik Stack File
-      shell: curl -L https://github.com/rbales79/Docker-Swarm-Traefik/blob/master/docker-compose.traefik.yml -o docker-compose.traefik.yml
+      shell: curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/docker-compose.traefik.yml -o docker-compose.traefik.yml
 
     - name: Install Traefik
       shell: docker stack deploy --compose-file=docker-compose.traefik.yml Traefik-Portainer
