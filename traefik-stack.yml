@@ -1,18 +1,18 @@
-version: &quot;3.3&quot;
+version: 3.3
 services:
   traefik:
     image: traefik
     command: --web \
       --docker \
       --docker.swarmmode \
-      --docker.domain=traefik.kb \
+      --docker.domain=rlab.local \
       --docker.watch \
       --logLevel=DEBUG
     networks:
       - traefik-net
     ports:
-      - &quot;80:80&quot;
-      - &quot;8080:8080&quot;
+      - 80:80
+      - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev/null:/traefik.toml
@@ -23,18 +23,18 @@ services:
   portainer:
     image: portainer/portainer
     volumes:
-      - &quot;/var/run/docker.sock:/var/run/docker.sock&quot;
-      - &quot;portainerdata:/data&quot;
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainerdata:/data
     networks:
       - traefik-net
     deploy:
       placement:
         constraints: [node.role == manager]
       labels:
-        - &quot;traefik.enable=true&quot;
-        - &quot;traefik.port=9000&quot;
-        - &quot;traefik.docker.network=mystack_traefik-net&quot;
-        - &quot;traefik.frontend.rule=Host:portainer.traefik.kb&quot;
+        - traefik.enable=true
+        - traefik.port=9000
+        - traefik.docker.network=mystack_traefik-net
+        - traefik.frontend.rule=Host:portainer.rlab.local
  
   ms1:
     image: melvindave/spring-boot-example
@@ -45,21 +45,21 @@ services:
     deploy:
       replicas: 3
       labels:
-        - &quot;traefik.enable=true&quot;
-        - &quot;traefik.port=8080&quot;
-        - &quot;traefik.docker.network=mystack_traefik-net&quot;
-        - &quot;traefik.frontend.rule=Host:ms1.traefik.kb&quot;
+        - traefik.enable=true
+        - traefik.port=8080
+        - traefik.docker.network=mystack_traefik-net
+        - traefik.frontend.rule=Host:ms1.rlab.local
  
   mongodb:
     image: mongo
     volumes:
-      - &quot;mongodata:/data/db&quot;
+      - mongodata:/data/db
     networks:
       - traefik-net
     deploy:
       replicas: 1
     ports:
-      - &quot;27017:27017&quot;  
+      - 27017:27017 
  
 networks:
   traefik-net:
