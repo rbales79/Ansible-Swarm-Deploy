@@ -11,7 +11,7 @@
         export EMAIL=rbales79@gmail.com
         export DOMAIN=rlab.local
         export USERNAME=admin
-        export PASSWORD=changethis
+        export PASSWORD=Passw0rd
         export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
         export CONSUL_REPLICAS=3
         export TRAEFIK_REPLICAS=3
