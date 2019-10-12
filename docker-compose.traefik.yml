@@ -98,7 +98,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainerdata:/data"
     networks:
-      - traefik-net
+      - traefik-public
     deploy:
       placement:
         constraints: [node.role == manager]
