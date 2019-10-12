@@ -10,6 +10,5 @@
         export DOMAIN=rlab.com
         export USERNAME=admin
         export PASSWORD=Passw0rd!
-        export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
         export TRAEFIK_PUBLIC_TAG=traefik-public
         docker stack deploy -c compose-swarmprom.yml swarmprom
