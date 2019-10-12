@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Download Traefik Stack File
+      shell: |
+        firewall-cmd --add-port=443/tcp --permanent
+        firewall-cmd --add-port=8500/tcp --permanent
+        firewall-cmd --add-port=8080/tcp --permanent
+        firewall-cmd --reload
