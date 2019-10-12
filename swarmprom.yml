@@ -9,7 +9,7 @@
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-swarmprom.yml -o compose-swarmprom.yml
         export DOMAIN=rlab.com
         export USERNAME=admin
-        export PASSWORD=Passw0rd
+        export PASSWORD=Passw0rd!
         export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
         export TRAEFIK_PUBLIC_TAG=traefik-public
         docker stack deploy -c compose-swarmprom.yml swarmprom
