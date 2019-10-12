@@ -15,4 +15,4 @@
         export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
         export CONSUL_REPLICAS=3
         export TRAEFIK_REPLICAS=3
-        docker stack deploy --compose-file=docker-compose.traefik.yml Traefik-Consul
+        docker stack deploy -c docker-compose.traefik.yml traefik-consul
