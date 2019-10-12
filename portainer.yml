@@ -3,7 +3,7 @@
   become: true
   tasks:
     - name: Set String
-      shell: export NODE_ID=$(docker info -f '{{.Swarm.NodeID}}')
+      shell: "export NODE_ID=$(docker info -f '{{.Swarm.NodeID}}')"
 
     - name: Update label
       shell: docker node update --label-add portainer.portainer-data=true $NODE_ID
