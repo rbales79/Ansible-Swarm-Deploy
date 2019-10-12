@@ -1,0 +1,14 @@
+---
+- hosts: manager[0]
+  become: true
+  tasks:
+    - name: Download and Install Swarmprom
+      shell: |
+        git clone https://github.com/stefanprodan/swarmprom.git
+        cd swarmprom
+        export DOMAIN=rlab.com
+        export USERNAME=admin
+        export PASSWORD=Passw0rd
+        export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+        export TRAEFIK_PUBLIC_TAG=traefik-public
+        docker stack deploy -c compose-swarmprom.yml swarmprom
