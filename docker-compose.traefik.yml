@@ -91,6 +91,23 @@ services:
       - traefik-public
     depends_on:
       - consul-leader
+
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainerdata:/data"
+    networks:
+      - traefik-net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.port=9000"
+        - "traefik.docker.network=traefik-consul_traefik-public"
+        - "traefik.frontend.rule=Host:portainer.traefik"
+
         
 volumes:
   consul-data-leader:
