@@ -2,12 +2,6 @@
 - hosts: manager[0]
   become: true
   tasks:
-    - name: Set String
-      shell: 'export NODE_ID=$(docker info -f '{{.Swarm.NodeID}}')'
-
-    - name: Update label
-      shell: docker node update --label-add portainer.portainer-data=true $NODE_ID
-
     - name: Download and Deploy Portainer
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-portainer.yml -o compose-portainer.yml
