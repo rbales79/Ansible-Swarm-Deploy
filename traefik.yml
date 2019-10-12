@@ -9,7 +9,7 @@
         docker stack deploy --compose-file=portainer-agent-stack.yml portainer
         docker network create --driver=overlay traefik-public
         export EMAIL=rbales79@gmail.com
-        export DOMAIN=rlab.local
+        export DOMAIN=rlab.com
         export USERNAME=admin
         export PASSWORD=Passw0rd
         export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
