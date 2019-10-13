@@ -5,12 +5,4 @@
     - name: Download and Install gitlab
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-gitlab.yml -o compose-gitlab.yml
-        export HOSTNAME=gitlab.rlab.com
-        export REGISTRY_HOSTNAME=registry.rlab.com
-        export TIMEZONE=America/New_York
-        export SMTP_ADDRESS=rbales79@rlab.com
-        export SMTP_PORT=587
-        export SMTP_USERNAME=rbales79
-        export SMTP_PASSWORD=Passw0rd!
-        export SMTP_DOMAIN=rlab.com
         docker stack deploy -c compose-gitlab.yml Gitlab-ce
