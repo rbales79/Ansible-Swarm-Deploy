@@ -65,6 +65,10 @@ services:
     deploy:
       labels:
         - traefik.frontend.rule=Host:gitlab.rlab.com
+        - traefik.registry.frontend.rule=Host:registry.gitlab.rlab.com
+        - traefik.pages.frontend.rule=Host:pages.gitlab.rlab.com
+        - traefik.pages.port=5201		        
+        - traefik.registry.port=5100
         - traefik.enable=true
         - traefik.port=80
         - traefik.tags=traefik-public
