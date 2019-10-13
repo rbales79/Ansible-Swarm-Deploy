@@ -3,9 +3,9 @@ networks:
   traefik-public:
     external: true
 volumes:
-  /gitlab/config:
-  /gitlab/logs:
-  /gitlab/data:  
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:  
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
@@ -24,9 +24,9 @@ services:
     ports:
       - '2222:22'
     volumes:
-      - /gitlab/config:/etc/gitlab
-      - /gitlab/logs:/var/log/gitlab
-      - /gitlab/data:/var/opt/gitlab
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
     networks:
       - traefik-public
     labels:
