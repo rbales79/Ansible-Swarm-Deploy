@@ -1,13 +1,9 @@
-version: '3'
+version: '3.3'
+
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
-    restart: always
-    networks:
-      - traefik-public   
-    hostname: gitlab.rlab.com
-    # I had problems with the health check. Sometimes it reported unhealthyness and therefore Traefik removed
-    # the container, so I turned it off. Maybe it works by now.
+	restart: always
     healthcheck:
       disable: true
     environment:
@@ -16,7 +12,6 @@ services:
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
         nginx['http2_enabled'] = false
-
         nginx['proxy_set_headers'] = {
           "Host" => "$$http_host",
           "X-Real-IP" => "$$remote_addr",
@@ -24,13 +19,10 @@ services:
           "X-Forwarded-Proto" => "https",
           "X-Forwarded-Ssl" => "on"
         }
-
         gitlab_rails['gitlab_shell_ssh_port'] = 22
-
         registry_external_url 'https://registry.gitlab.rlab.com'
         registry_nginx['listen_port'] = 5100
         registry_nginx['listen_https'] = false
-
         registry_nginx['proxy_set_headers'] = {
           "Host" => "$$http_host",
           "X-Real-IP" => "$$remote_addr",
@@ -38,11 +30,9 @@ services:
           "X-Forwarded-Proto" => "https",
           "X-Forwarded-Ssl" => "on"
         }
-
         pages_external_url 'https://pages.gitlab.rlab.com'
         pages_nginx['listen_port'] = 5200
         pages_nginx['listen_https'] = false
-
         pages_nginx['proxy_set_headers'] = {
           "Host" => "$$http_host",
           "X-Real-IP" => "$$remote_addr",
@@ -50,32 +40,30 @@ services:
           "X-Forwarded-Proto" => "https",
           "X-Forwarded-Ssl" => "on"
         }
-
         gitlab_pages['inplace_chroot'] = true
         gitlab_pages['external_http'] = ['gitlab:5201']
+
     volumes:
       - gitlab-config:/etc/gitlab
       - gitlab-logs:/var/log/gitlab
       - gitlab-data:/var/opt/gitlab
-   
-    ports:
-      # Feel free to map this to a different port if that one is in use already
-      - "2222:22"
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.tags=traefik-public
-      # Host settings for GitLab itself
-      - traefik.gitlab.frontend.rule=Host:gitlab.rlab.com
-      - traefik.gitlab.port=80
-      # Host settings for the registry
-      - traefik.registry.frontend.rule=Host:registry.gitlab.rlab.com
-      - traefik.registry.port=5100
-      # Host settings for GitLab pages. Since I don't have a wildcard certificate, I list every domain on it's own here
-      - traefik.pages.frontend.rule=Host:pages.gitlab.rlab.com,username.pages.gitlab.rlab.com
-      - traefik.pages.port=5201
-     
- 
+
+    networks:
+      - traefik-public
+	  
+    deploy:
+      labels:
+        - traefik.frontend.rule=Host:${DOMAIN?Variable DOMAIN not set}
+        - traefik.enable=true
+        - traefik.port=80
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+		
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     restart: always
