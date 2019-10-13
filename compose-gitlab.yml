@@ -16,7 +16,7 @@ services:
     # Using Traefik
     # https://docs.traefik.io/user-guide/docker-and-lets-encrypt/
     labels:
-      - "traefik.docker.network=frontproxynet"
+      - "traefik.docker.network=traefik-public"
       - "traefik.enable=true"
       - "traefik.gl.enable=true"
       - "traefik.gl.port=80"
@@ -86,7 +86,7 @@ services:
 networks:
   default:
     external:
-      name: frontproxynet
+      name: traefik-public
 
 volumes:
   config:
