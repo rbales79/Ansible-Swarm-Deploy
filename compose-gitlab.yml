@@ -4,6 +4,7 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:latest
     restart: always
+    hostname: gitlab.rlab.com
     healthcheck:
       disable: true
     environment:
@@ -53,7 +54,7 @@ services:
 
     deploy:
       labels:
-        - traefik.frontend.rule=Host:${DOMAIN?Variable DOMAIN not set}
+        - traefik.frontend.rule=Host:gitlab.rlab.com
         - traefik.enable=true
         - traefik.port=80
         - traefik.tags=traefik-public
