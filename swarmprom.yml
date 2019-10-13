@@ -4,7 +4,7 @@
   tasks:
     - name: Download and Install Swarmprom
       shell: |
-        git clone https://github.com/stefanprodan/swarmprom.git
+        git clone https://github.com/rbales79/swarmprom.git
         cd swarmprom
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-swarmprom.yml -o compose-swarmprom.yml
         export DOMAIN=rlab.com
