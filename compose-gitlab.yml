@@ -1,94 +1,35 @@
-#
-# THIS IS AN EXAMPLE FILE WORKING WITH TRAEFIK ONLY
-#
-# Copy .env.dist to .env to customize your domain names.
-#
-version: '3'
+version: '3.3'
+networks:
+  traefik-public:
+    external: true
 services:
-  web:
-    image: 'gitlab/gitlab-ce:latest'
+  gitlab:
+    image: gitlab/gitlab-ce:latest
     restart: always
-    #
-    # Alias is needed for Mattermost
-    # to be able to contact Gitlab SSO
-    #
-    hostname: ${HOSTNAME}
-    # Using Traefik
-    # https://docs.traefik.io/user-guide/docker-and-lets-encrypt/
-    labels:
-      - "traefik.docker.network=traefik-public"
-      - "traefik.enable=true"
-      - "traefik.gl.enable=true"
-      - "traefik.gl.port=80"
-      - "traefik.gl.frontend.rule=Host:${HOSTNAME}"
-      - "traefik.gl.frontend.entryPoints=http,https"
-      - "traefik.reg.enable=true"
-      - "traefik.reg.port=80"
-      - "traefik.reg.frontend.rule=Host:${REGISTRY_HOSTNAME}"
-      - "traefik.reg.frontend.entryPoints=http,https"
-    # I had problems with the health check. Sometimes it reported unhealthyness and therefore Traefik removed
-    # the container, so I turned it off. Maybe it works by now.
-    healthcheck:
-      disable: true
+    container_name: gitlab
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://${HOSTNAME}'
-        nginx['redirect_http_to_https'] = false
-        nginx['listen_port'] = 80
+        external_url 'https://gitlab.rlab.com'
+        registry_external_url 'https://registry.rlab.com'
+        nginx['listen_port'] = '80'
         nginx['listen_https'] = false
-        nginx['proxy_set_headers'] = {
-          'X-Forwarded-Proto' => 'https',
-          'X-Forwarded-Ssl' => 'on'
-        }
-        nginx['client_max_body_size'] = '2G'
-        gitlab_rails['smtp_enable'] = true
-        gitlab_rails['smtp_address'] = "${SMTP_ADDRESS}"
-        gitlab_rails['smtp_port'] = ${SMTP_PORT}
-        gitlab_rails['smtp_user_name'] = "${SMTP_USERNAME}"
-        gitlab_rails['smtp_password'] = "${SMTP_PASSWORD}"
-        gitlab_rails['smtp_domain'] = "${SMTP_DOMAIN}"
-        gitlab_rails['smtp_authentication'] = "login"
-        gitlab_rails['smtp_enable_starttls_auto'] = true
-        gitlab_rails['gitlab_email_from'] = 'gitlab-notifications@${SMTP_DOMAIN}'
-        gitlab_rails['gitlab_email_display_name'] = 'Gitlab'
-        gitlab_rails['gitlab_email_reply_to'] = 'noreply@${SMTP_DOMAIN}'
-        unicorn['worker_timeout'] = 60
-        unicorn['worker_processes'] = 2
-        sidekiq['concurrency'] = 15
-        postgresql['shared_buffers'] = "512MB"
-        gitlab_rails['artifacts_enabled'] = true
-        gitlab_rails['artifacts_path'] = "/var/opt/gitlab/gitlab-artifacts"
-        gitlab_rails['lfs_enabled'] = true
-        gitlab_rails['backup_keep_time'] = 172600
-        gitlab_ci['backup_keep_time'] = 172600
-        gitlab_rails['time_zone'] = "${TIMEZONE}"
-        #
-        # Docker registry
-        #
-        registry_external_url 'https://${REGISTRY_HOSTNAME}'
-        gitlab_rails['registry_enabled'] = true
-        registry_nginx['listen_port'] = 80
+        registry_nginx['listen_port'] = '80'
         registry_nginx['listen_https'] = false
-        #
-        # First run this stack before
-        # configuring Mattermost
-        #
+        gitlab_rails['registry_enabled'] = true
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
     ports:
-      # Make sure your host 22 port is not already taken by SSH
-      # We encorage you to change you host SSH port to reserve it for Gitlab
       - '2222:22'
     volumes:
-      - config:/etc/gitlab
-      - logs:/var/log/gitlab
-      - data:/var/opt/gitlab
-      - ./../traefik/ssl:/etc/gitlab/ssl/:ro
-
-networks:
-  default:
-    external:
-      name: traefik-public
-
-volumes:
-  config:
-  logs:
-  data:
+      - /persist/gitlab/config:/etc/gitlab
+      - /persist/gitlab/logs:/var/log/gitlab
+      - /persist/gitlab/data:/var/opt/gitlab
+    networks:
+      - traefik-public
+    labels:
+      - traefik.docker.network=traefik-public
+      - traefik.ci.frontend.rule=Host:gitlab.rlab.com
+      - traefik.ci.port=80
+      - traefik.ci.frontend.entryPoints=http,https
+      - traefik.reg.frontend.rule=Host:registry.rlab.com
+      - traefik.reg.port=80
+      - traefik.reg.frontend.entryPoints=http,https
