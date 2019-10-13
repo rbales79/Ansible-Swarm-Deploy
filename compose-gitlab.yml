@@ -5,7 +5,7 @@ services:
     image: gitlab/gitlab-runner:alpine
     restart: always
     networks:
-      - gitlab-runners
+      - traefik-public
     volumes:
       # Mount Docker socket for dind
       - /var/run/docker.sock:/var/run/docker.sock
@@ -63,7 +63,6 @@ services:
 
     networks:
       - traefik-public
-      - gitlab-runners
 
     deploy:
       labels:
@@ -85,8 +84,6 @@ services:
 networks:
   traefik-public:
     external: true
-  gitlab-runners:
-    external: true    
 
 volumes:
   gitlab-config:
