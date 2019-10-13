@@ -65,7 +65,7 @@ services:
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
 
-gitlab-runner:
+  gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     restart: always
     volumes:
