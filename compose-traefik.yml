@@ -41,7 +41,7 @@ services:
         preferences:
           - spread: node.id
   traefik:
-    image: traefik:v2.0
+    image: traefik:v1.7
     ports:
       - 80:80
       - 443:443
