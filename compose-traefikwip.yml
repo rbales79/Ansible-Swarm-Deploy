@@ -3,6 +3,7 @@ services:
   traefik_init:
     image: traefik:v1.7
     command:
+      - "traefik"
       - "storeconfig"
       - "--api"
       - "--entrypoints=Name:http Address::80 Redirect.EntryPoint:https"
