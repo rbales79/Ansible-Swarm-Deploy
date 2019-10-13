@@ -55,6 +55,8 @@ services:
       - gitlab-config:/etc/gitlab
       - gitlab-logs:/var/log/gitlab
       - gitlab-data:/var/opt/gitlab
+    networks:
+      - traefik-public      
     ports:
       # Feel free to map this to a different port if that one is in use already
       - "2222:22"
@@ -69,6 +71,8 @@ services:
       # Host settings for GitLab pages. Since I don't have a wildcard certificate, I list every domain on it's own here
       - traefik.pages.frontend.rule=Host:pages.gitlab.rlab.com,username.pages.gitlab.rlab.com
       - traefik.pages.port=5201
+      - traefik.tags=traefik-public
+      - traefik.docker.network=traefik-public
 
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
@@ -79,6 +83,10 @@ services:
       # We need to slightly modify the runner config, so mount it here and just create an empty file for the beginning
       # Make sure that the permissions are correct so that the container can write to it
       - ./runner.toml:/etc/gitlab-runner/config.toml
+
+networks:
+  traefik-public:
+    external: true
 
 volumes:
   gitlab-config:
