@@ -3,7 +3,7 @@ version: '3.3'
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
-	restart: always
+    restart: always
     healthcheck:
       disable: true
     environment:
@@ -50,7 +50,7 @@ services:
 
     networks:
       - traefik-public
-	  
+
     deploy:
       labels:
         - traefik.frontend.rule=Host:${DOMAIN?Variable DOMAIN not set}
@@ -63,8 +63,8 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-		
-  gitlab-runner:
+
+gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     restart: always
     volumes:
