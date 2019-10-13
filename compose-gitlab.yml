@@ -1,6 +1,16 @@
 version: '3.3'
 
 services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: always
+    volumes:
+      # Mount Docker socket for dind
+      - /var/run/docker.sock:/var/run/docker.sock
+      # We need to slightly modify the runner config, so mount it here and just create an empty file for the beginning
+      # Make sure that the permissions are correct so that the container can write to it
+      - gitlab-runner-data:/etc/gitlab-runner
+  
   gitlab:
     image: gitlab/gitlab-ce:latest
     restart: always
@@ -64,16 +74,6 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-
-  gitlab-runner:
-    image: gitlab/gitlab-runner:alpine
-    restart: always
-    volumes:
-      # Mount Docker socket for dind
-      - /var/run/docker.sock:/var/run/docker.sock
-      # We need to slightly modify the runner config, so mount it here and just create an empty file for the beginning
-      # Make sure that the permissions are correct so that the container can write to it
-      - gitlab-runner-data:/etc/gitlab-runner
 
 networks:
   traefik-public:
