@@ -82,7 +82,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # We need to slightly modify the runner config, so mount it here and just create an empty file for the beginning
       # Make sure that the permissions are correct so that the container can write to it
-      - ./runner.toml:/etc/gitlab-runner/config.toml
+      - gitlab-runner-data/runner.toml:/etc/gitlab-runner/config.toml
 
 networks:
   traefik-public:
