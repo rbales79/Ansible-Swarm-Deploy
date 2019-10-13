@@ -16,9 +16,9 @@ services:
         external_url 'https://gitlab.rlab.com'
         registry_external_url 'https://registry.rlab.com'
         nginx['listen_port'] = '80'
-        nginx['listen_https'] = false
+        nginx['listen_https'] = true
         registry_nginx['listen_port'] = '80'
-        registry_nginx['listen_https'] = false
+        registry_nginx['listen_https'] = true
         gitlab_rails['registry_enabled'] = true
         gitlab_rails['gitlab_shell_ssh_port'] = 2222
     ports:
@@ -30,6 +30,7 @@ services:
     networks:
       - traefik-public
     labels:
+      - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.ci.frontend.rule=Host:gitlab.rlab.com
       - traefik.ci.port=80
@@ -37,3 +38,5 @@ services:
       - traefik.reg.frontend.rule=Host:registry.rlab.com
       - traefik.reg.port=80
       - traefik.reg.frontend.entryPoints=http,https
+      - traefik.tags=traefik-public
+
