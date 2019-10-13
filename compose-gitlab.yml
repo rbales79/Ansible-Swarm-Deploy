@@ -6,6 +6,7 @@ services:
     restart: always
     networks:
       - traefik-public
+      - gitlab-runners
     volumes:
       # Mount Docker socket for dind
       - /var/run/docker.sock:/var/run/docker.sock
@@ -63,6 +64,7 @@ services:
 
     networks:
       - traefik-public
+      - gitlab-runners
 
     deploy:
       labels:
@@ -82,6 +84,9 @@ services:
         - traefik.webservice.frontend.entryPoints=https
 
 networks:
+  gitlab-runners:
+    driver: overlay
+    attachable: true
   traefik-public:
     external: true
 
