@@ -3,6 +3,8 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:latest
     restart: always
+    networks:
+      - traefik-public   
     hostname: gitlab.rlab.com
     # I had problems with the health check. Sometimes it reported unhealthyness and therefore Traefik removed
     # the container, so I turned it off. Maybe it works by now.
@@ -55,13 +57,14 @@ services:
       - gitlab-config:/etc/gitlab
       - gitlab-logs:/var/log/gitlab
       - gitlab-data:/var/opt/gitlab
-    networks:
-      - traefik-public      
+   
     ports:
       # Feel free to map this to a different port if that one is in use already
       - "2222:22"
     labels:
       - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.tags=traefik-public
       # Host settings for GitLab itself
       - traefik.gitlab.frontend.rule=Host:gitlab.rlab.com
       - traefik.gitlab.port=80
@@ -71,9 +74,8 @@ services:
       # Host settings for GitLab pages. Since I don't have a wildcard certificate, I list every domain on it's own here
       - traefik.pages.frontend.rule=Host:pages.gitlab.rlab.com,username.pages.gitlab.rlab.com
       - traefik.pages.port=5201
-      - traefik.tags=traefik-public
-      - traefik.docker.network=traefik-public
-
+     
+ 
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     restart: always
@@ -82,7 +84,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # We need to slightly modify the runner config, so mount it here and just create an empty file for the beginning
       # Make sure that the permissions are correct so that the container can write to it
-      - gitlab-runner-data/runner.toml:/etc/gitlab-runner/config.toml
+      - gitlab-runner-data:/etc/gitlab-runner
 
 networks:
   traefik-public:
