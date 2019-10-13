@@ -7,4 +7,7 @@
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-traefikwip.yml -o compose-traefikwip.yml
         docker network create --driver=overlay traefik-public
+        export USERNAME=admin
+        export PASSWORD=Passw0rd!
+        export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
         docker stack deploy -c compose-traefikwip.yml traefikwip
