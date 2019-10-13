@@ -1,0 +1,9 @@
+---
+- hosts: manager[0]
+  become: true
+  tasks:
+    - name: Download and Install gitlab
+      shell: |
+        curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-gitlab.yml -o compose-gitlab.yml
+        curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/.env -o .env
+        docker stack deploy -c compose-gitlab.yml Gitlab-ce
