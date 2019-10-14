@@ -6,7 +6,7 @@
       shell: |
         git clone https://github.com/stefanprodan/swarmprom.git
         cd swarmprom
-        curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-swarmprom.yml -o compose-swarmprom.yml
+        curl -L https://raw.githubusercontent.com/rbales79/Ansible-Swarm-Deploy/master/compose-swarmprom.yml -o compose-swarmprom.yml
         export DOMAIN=roybales.com
         export ADMIN_USER=admin
         export ADMIN_PASSWORD=Passw0rd!
