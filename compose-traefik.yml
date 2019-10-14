@@ -45,7 +45,6 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
     deploy:
       replicas: ${TRAEFIK_REPLICAS:-3}
       placement:
@@ -77,6 +76,13 @@ services:
       --entrypoints='Name:https Address::443 TLS'
       --consul
       --consul.endpoint="consul-leader:8500"
+      --acme
+      --acme.email=${EMAIL}
+      --acme.storage="traefik/acme/account"
+      --acme.entryPoint=https
+      --acme.httpChallenge.entryPoint=http
+      --acme.onhostrule=true
+      --acme.acmelogging=true
       --logLevel=INFO
       --accessLog
       --api
