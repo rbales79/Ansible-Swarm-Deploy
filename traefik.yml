@@ -6,7 +6,7 @@
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Ansible-Swarm-Deploy/master/compose-traefik.yml -o compose-traefik.yml
         docker network create --driver=overlay traefik-public
-        export EMAIL=rbales@rlab.com
+        export EMAIL=roy@rlab.com
         export DOMAIN=rlab.com
         export USERNAME=admin
         export PASSWORD=Passw0rd!
