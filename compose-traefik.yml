@@ -40,7 +40,7 @@ services:
       - default
       - traefik-proxy
 
-portainer:
+  portainer:
     image: portainer/portainer
     restart: unless-stopped
     volumes:
