@@ -11,6 +11,7 @@ The `swarm.yml` playbook uses a shell statement for determining cluster membersh
 
 #Traefik
 https://medium.com/@joshuaavalon/setup-traefik-step-by-step-406792afe9b2
-LetsEncrypt requires a real public domain name
+LetsEncrypt requires a real public domain name (this may of been why it failed with rlab.local, need to test)
+
 
 
