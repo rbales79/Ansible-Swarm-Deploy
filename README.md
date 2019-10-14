@@ -14,4 +14,13 @@ https://medium.com/@joshuaavalon/setup-traefik-step-by-step-406792afe9b2
 LetsEncrypt requires a real public domain name (this may of been why it failed with rlab.local, need to test)
 
 
+# Removed from command: > inside compose-traefik-step-by-step-406792afe9b2
+      #--acme
+      #--acme.email=${EMAIL}
+      #--acme.storage="traefik/acme/account"
+      #--acme.entryPoint=https
+      #--acme.httpChallenge.entryPoint=http
+      #--acme.onhostrule=true
+      #--acme.acmelogging=true
+
 

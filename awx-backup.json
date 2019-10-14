@@ -76,7 +76,7 @@
     "name": "Centos-Credentials",
     "credential_type": "Machine",
     "inputs": {
-      "password": "",
+      "password": "Passw0rd!",
       "username": "root"
     },
     "asset_relation": {
@@ -139,7 +139,7 @@
     "credential_type": "VMware vCenter",
     "inputs": {
       "host": "rvcenter.rlab.local",
-      "password": "",
+      "password": "VMware1!",
       "username": "administrator@vsphere.local"
     },
     "asset_relation": {
@@ -210,6 +210,7 @@
       "host": [
         {
           "name": "swarm-manager1.rlab.local"
+		  "variables": "---\nansible_host: 172.16.2.21"
         },
         {
           "name": "swarm-manager2.rlab.local",
