@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Download Traefik Stack File
+      shell: |
+        docker stack rm $(docker stack ls)
+        docker system prune -a -f

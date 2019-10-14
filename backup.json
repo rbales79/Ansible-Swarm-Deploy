@@ -6,7 +6,7 @@
     "last_name": "",
     "email": "root@localhost",
     "is_superuser": true,
-    "last_login": "2019-10-13T19:29:27.307781Z"
+    "last_login": "2019-10-14T01:30:30.170993Z"
   },
   {
     "asset_type": "organization",
@@ -166,46 +166,9 @@
   },
   {
     "asset_type": "project",
-    "name": "Docker Swarm Master",
+    "name": "Ansible-Swarm-Deploy",
     "scm_type": "git",
-    "scm_url": "https://github.com/rbales79/ansible-swarm-playbook.git",
-    "scm_branch": "master",
-    "credential": "rbales79-github",
-    "organization": "Default",
-    "scm_update_on_launch": true,
-    "asset_relation": {
-      "notification_templates_error": [],
-      "notification_templates_success": [],
-      "schedules": [],
-      "roles": [
-        {
-          "name": "Admin",
-          "user": [],
-          "team": []
-        },
-        {
-          "name": "Use",
-          "user": [],
-          "team": []
-        },
-        {
-          "name": "Update",
-          "user": [],
-          "team": []
-        },
-        {
-          "name": "Read",
-          "user": [],
-          "team": []
-        }
-      ]
-    }
-  },
-  {
-    "asset_type": "project",
-    "name": "Traefik-Consul",
-    "scm_type": "git",
-    "scm_url": "https://github.com/rbales79/Docker-Swarm-Traefik.git",
+    "scm_url": "https://github.com/rbales79/Ansible-Swarm-Deploy.git",
     "scm_branch": "master",
     "credential": "rbales79-github",
     "organization": "Default",
@@ -445,7 +408,7 @@
     "asset_type": "job_template",
     "name": "Gitlab-ce",
     "inventory": "swarm",
-    "project": "Traefik-Consul",
+    "project": "Ansible-Swarm-Deploy",
     "playbook": "gitlab.yml",
     "use_fact_cache": true,
     "become_enabled": true,
@@ -482,7 +445,7 @@
     "asset_type": "job_template",
     "name": "open-fw",
     "inventory": "swarm",
-    "project": "Traefik-Consul",
+    "project": "Ansible-Swarm-Deploy",
     "playbook": "open-fwports.yml",
     "use_fact_cache": true,
     "become_enabled": true,
@@ -519,7 +482,7 @@
     "asset_type": "job_template",
     "name": "Portainer",
     "inventory": "swarm",
-    "project": "Traefik-Consul",
+    "project": "Ansible-Swarm-Deploy",
     "playbook": "portainer.yml",
     "use_fact_cache": true,
     "become_enabled": true,
@@ -556,7 +519,7 @@
     "asset_type": "job_template",
     "name": "Swarm Deploy Master",
     "inventory": "swarm",
-    "project": "Docker Swarm Master",
+    "project": "Ansible-Swarm-Deploy",
     "playbook": "swarm.yml",
     "verbosity": 1,
     "use_fact_cache": true,
@@ -594,45 +557,8 @@
     "asset_type": "job_template",
     "name": "Swarmprom",
     "inventory": "swarm",
-    "project": "Traefik-Consul",
+    "project": "Ansible-Swarm-Deploy",
     "playbook": "swarmprom.yml",
-    "use_fact_cache": true,
-    "become_enabled": true,
-    "allow_simultaneous": true,
-    "asset_relation": {
-      "survey_spec": {},
-      "notification_templates_error": [],
-      "notification_templates_success": [],
-      "extra_credentials": [],
-      "schedules": [],
-      "labels": [],
-      "roles": [
-        {
-          "name": "Admin",
-          "user": [
-            "admin"
-          ],
-          "team": []
-        },
-        {
-          "name": "Execute",
-          "user": [],
-          "team": []
-        },
-        {
-          "name": "Read",
-          "user": [],
-          "team": []
-        }
-      ]
-    }
-  },
-  {
-    "asset_type": "job_template",
-    "name": "Traefik2wip",
-    "inventory": "swarm",
-    "project": "Traefik-Consul",
-    "playbook": "traefikwip.yml",
     "use_fact_cache": true,
     "become_enabled": true,
     "allow_simultaneous": true,
@@ -668,7 +594,7 @@
     "asset_type": "job_template",
     "name": "Traefik-Consul",
     "inventory": "swarm",
-    "project": "Traefik-Consul",
+    "project": "Ansible-Swarm-Deploy",
     "playbook": "traefik.yml",
     "use_fact_cache": true,
     "become_enabled": true,
