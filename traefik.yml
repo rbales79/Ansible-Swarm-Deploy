@@ -5,12 +5,12 @@
     - name: Download Traefik Stack File
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Ansible-Swarm-Deploy/master/compose-traefik.yml -o compose-traefik.yml
-        docker network create --driver=overlay traefik-public
-        export EMAIL=rbales@rlab.com
-        export DOMAIN=rlab.com
-        export USERNAME=admin
-        export PASSWORD=Passw0rd!
-        export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
-        export CONSUL_REPLICAS=3
-        export TRAEFIK_REPLICAS=3
+        #docker network create --driver=overlay traefik-public
+        #export EMAIL=rbales@rlab.com
+        #export DOMAIN=rlab.com
+        #export USERNAME=admin
+        #export PASSWORD=Passw0rd!
+        #export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+        #export CONSUL_REPLICAS=3
+        #export TRAEFIK_REPLICAS=3
         docker stack deploy -c compose-traefik.yml traefik-consul
