@@ -17,12 +17,12 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:latest
     restart: always
-    hostname: gitlab.roybales.com
+    hostname: gitlab.rlab.com
     healthcheck:
       disable: true
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.roybales.com'
+        external_url 'https://gitlab.rlab.com'
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
         nginx['http2_enabled'] = false
@@ -34,7 +34,7 @@ services:
           "X-Forwarded-Ssl" => "on"
         }
         gitlab_rails['gitlab_shell_ssh_port'] = 22
-        registry_external_url 'https://registry.gitlab.roybales.com'
+        registry_external_url 'https://registry.gitlab.rlab.com'
         registry_nginx['listen_port'] = 5100
         registry_nginx['listen_https'] = false
         registry_nginx['proxy_set_headers'] = {
@@ -44,7 +44,7 @@ services:
           "X-Forwarded-Proto" => "https",
           "X-Forwarded-Ssl" => "on"
         }
-        pages_external_url 'https://pages.gitlab.roybales.com'
+        pages_external_url 'https://pages.gitlab.rlab.com'
         pages_nginx['listen_port'] = 5200
         pages_nginx['listen_https'] = false
         pages_nginx['proxy_set_headers'] = {
@@ -68,9 +68,9 @@ services:
 
     deploy:
       labels:
-        - traefik.frontend.rule=Host:gitlab.roybales.com
-        - traefik.registry.frontend.rule=Host:registry.gitlab.roybales.com
-        - traefik.pages.frontend.rule=Host:pages.gitlab.roybales.com
+        - traefik.frontend.rule=Host:gitlab.rlab.com
+        - traefik.registry.frontend.rule=Host:registry.gitlab.rlab.com
+        - traefik.pages.frontend.rule=Host:pages.gitlab.rlab.com
         - traefik.pages.port=5201
         - traefik.registry.port=5100
         - traefik.enable=true

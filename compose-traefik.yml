@@ -76,13 +76,13 @@ services:
       --entrypoints='Name:https Address::443 TLS'
       --consul
       --consul.endpoint="consul-leader:8500"
-      --acme
-      --acme.email=${EMAIL}
-      --acme.storage="traefik/acme/account"
-      --acme.entryPoint=https
-      --acme.httpChallenge.entryPoint=http
-      --acme.onhostrule=true
-      --acme.acmelogging=true
+      #--acme
+      #--acme.email=${EMAIL}
+      #--acme.storage="traefik/acme/account"
+      #--acme.entryPoint=https
+      #--acme.httpChallenge.entryPoint=http
+      #--acme.onhostrule=true
+      #--acme.acmelogging=true
       --logLevel=INFO
       --accessLog
       --api
