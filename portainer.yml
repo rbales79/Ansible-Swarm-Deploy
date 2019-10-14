@@ -5,5 +5,5 @@
     - name: Download and Deploy Portainer
       shell: |
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-portainer.yml -o compose-portainer.yml
-        export DOMAIN=portainer.rlab.com
+        export DOMAIN=portainer.roybales.com
         docker stack deploy -c compose-portainer.yml portainer

@@ -1,0 +1,438 @@
+/* OVERRIDES TO main.css */
+.container {
+  border-top: solid 5px #e7eae8;
+}
+
+@media screen and (max-width: 840px) {
+  .container {
+    border-top: none;
+  }
+}
+
+.container h2 {
+  margin-top: -0.9em;
+}
+
+.container h2 span {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+pre > code {
+  margin: 0;
+  padding: 0;
+}
+
+#what section.box.special {
+  min-height: 330px;
+}
+
+.style1 .container h2 span {
+  background: #f5f5f5;
+}
+
+.style2 .container h2 span {
+  background: #87b885;
+}
+
+.style3 .container h2 span {
+  background: #BFBFBF;
+}
+
+@media screen and (max-width: 840px) {
+  span.nav-text {
+    display: block;
+  }
+  #nav-home {
+    display: block;
+  }
+}
+
+span.nav-text {
+  display: none;
+}
+
+header.major p {
+  font-size: 1.25em;
+}
+
+.wrapper.style3 {
+  background-color: #BFBFBF;
+  background-image: url("/assets/css/images/banner.svg");
+  background-position: 25% bottom;
+  background-repeat: repeat-x;
+  border-top: 3px solid #B0B0B0;
+  border-bottom: 3px solid #B0B0B0;
+}
+
+.wrapper.style3 .box {
+  background: #f5f5f5;
+}
+
+.wrapper.style3 h2 {
+  color: #ffffff;
+}
+
+img {
+  max-width: 100%;
+  heigh: auto;
+  vertical-align: middle;
+}
+
+/* CUSTOM CSS */
+.nav-icon {
+  color: #ffffff;
+  font-size: 1.3em;
+}
+
+#banner {
+  padding-top: 8em;
+  padding-bottom: 5em;
+}
+
+#banner #logo {
+  padding-bottom: 2em;
+}
+
+#header img#nav-logo {
+  padding-left: 20px;
+  height: 32px;
+}
+
+#nav-logo-link {
+  display: none;
+}
+
+header#header.reveal.alt #nav-logo-link {
+  display: none;
+}
+
+header#header.reveal #nav-logo-link,
+header#header #nav-logo-link {
+  display: block;
+}
+
+header nav > ul > li a#nav-home {
+  display: none;
+}
+
+#footer {
+  padding-top: 5px;
+  padding-bottom: 25px;
+}
+
+.center {
+  text-align: center;
+}
+
+.post-img {
+  border: 5px solid #F5F5F5;
+}
+
+.img-circle {
+  border-radius: 50%;
+  border: 4px solid #7BA57A;
+}
+
+.profile {
+  width: 6em;
+  height: 6em;
+  margin-bottom: 1em;
+}
+
+.wrapper.style2 .darker b,
+.project-tab-content .darker a,
+.darker {
+  color: #2F3B46 !important;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.hidden {
+  display: none;
+}
+
+input[type="text"].parsley-error,
+input[type="email"].parsley-error,
+.parsley-error {
+  border: 1px solid red;
+}
+
+input[type="text"].parsley-success,
+.parsley-success {
+  border: 1px solid green;
+}
+
+/* BLOG */
+/*
+#blog .box {
+  position: relative;
+}
+#blog .actions {
+  position: absolute;
+  bottom: 20px;
+  left: 98px;
+}*/
+
+
+#blog .box header {
+  border-bottom: solid 1px #D5D5D5;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+}
+
+#blog .actions a {
+  background-color: #94c190;
+  box-shadow: none;
+  color: #ffffff !important;
+}
+
+#blog h1, h2, h3, h4, h5 {
+  letter-spacing: 0em;
+}
+
+#blog h3 {
+  font-size: 1.15em;
+  margin-bottom: 5px;
+}
+
+#blog ul {
+  /*list-style: none;
+  margin: 0px;
+  padding-left: 0px;*/
+}
+
+#blog ul li {
+  padding-left: 0px;
+}
+
+#blog #browse-wrapper {
+  width: 100%;
+  text-align: center;
+}
+#blog .post header {
+  margin: 0 0 2.5em 0;
+}
+
+#blog .post h3 {
+  font-size: 3em;
+  margin: 0 0 0.5em 0;
+}
+
+#blog .post ul.meta {
+  margin: 0 0 0.5em 0;
+}
+
+#blog .post-summary h3 {
+  line-height: 1em;
+  margin: 0 0 0.75em 0;
+}
+
+#blog .post-summary .meta {
+  margin: 0;
+  line-height: 1em;
+}
+
+#blog ul.meta {
+  font-size: 0.85em;
+  color: #a1aaa5;
+}
+
+#blog ul.meta li {
+  position: relative;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+#blog ul.meta li a {
+  color: inherit;
+  outline: 0;
+}
+
+#blog ul.meta li:first-child {
+  margin-left: 0;
+}
+
+#blog ul.meta li:before {
+  opacity: 0.5;
+  cursor: default;
+  margin-right: 0.5em;
+}
+
+/* CONTACT */
+#contact ul.labeled-icons h3 {
+  font-size: 1em;
+}
+
+#contact ul.labeled-icons li .icon.fa-twitter,
+#contact ul.labeled-icons li .icon {
+  color: #555555;
+  background-color: transparent;
+}
+
+/* POST */
+.post header ul.meta {
+  padding-left: 0;
+}
+
+.post header p.subtitle {
+  margin-bottom: .8em;
+}
+
+.post header h2 {
+  font-size: 36px;
+}
+
+.post h2 {
+  padding-top: 1em;
+}
+
+/* PROJECT TABS */
+/**
+ * Tabs navigation
+ */
+.project-tabs-nav {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.project-tab-content h2 {
+  font-weight: 500;
+  text-transform: none;
+}
+
+.project-tab-content p {
+  font-size: 1.25em;
+  margin: 0 0 .7em 0;
+}
+
+.project-tab-content a {
+  color: #ffffff;
+}
+
+.project-tab-content a:hover {
+  color: #87b885;
+  text-decoration: none;
+}
+
+.project-tab-content a.button {
+  margin-top: 2em;
+  font-size: .8em;
+}
+
+.project-tabs-nav .icon.major {
+  width: 2.5em;
+  height: 2.5em;
+  line-height: 2.5em;
+  margin: 0 auto .5em auto;
+}
+
+.project-tabs-nav-link {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  margin-right: 4px;
+  padding: 12px 12px 22px 12px;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  -webkit-transition: color 0.3s;
+          transition: color 0.3s;
+  text-transform: uppercase;
+}
+
+.project-tabs-nav-link:last-child {
+  margin-right: 0;
+}
+
+.project-tabs-nav-link:hover {
+  /*color: #6d6d6d;*/
+  text-transform: uppercase;
+}
+
+.project-tabs-nav-link.is-active {
+  color: #2F3B46;
+  background-color: #94c190;
+}
+
+.project-tabs-nav a {
+  text-decoration: none;
+}
+
+.project-tabs-nav a:hover {
+  color: #2F3B46;
+}
+
+.project-tabs-nav-link i,
+.project-tabs-nav-link span {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.project-tabs-nav-link i {
+  font-size: 18px;
+}
+
+.project-tabs-nav-link span {
+  display: none;
+  font-size: 18px;
+}
+
+.project-tabs-nav-link span.project-tabs-subtitle {
+  font-size: 12px;
+  padding-top: 6px;
+  font-weight: 500;
+}
+
+@media all and (min-width: 720px) {
+  .project-tabs-nav-link i {
+    margin-bottom: 12px;
+    font-size: 22px;
+  }
+  .project-tabs-nav-link span {
+    display: block;
+  }
+}
+
+/**
+ * Tab
+ */
+.project-tab {
+  display: none;
+  background-color: #94c190;
+}
+
+.project-tab.is-active {
+  display: block;
+}
+
+.project-tab-content {
+  padding: 2.5rem 2.5rem 1.5rem 2.5rem;
+}
+
+/**
+ * Tabs no-js fallback
+ */
+.project-tabs.no-js .project-tabs-nav {
+  display: none;
+}
+
+.project-tabs.no-js .project-tab {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.project-tabs.no-js .project-tab:last-child {
+  margin-bottom: 0;
+}
+
+.post-img {
+  padding: 10px;
+}

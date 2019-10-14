@@ -1,0 +1,35 @@
+(function($) {
+  // img tag centering, primarily for blog posts
+  $('.post img').addClass('post-img');
+  $('.post-img').parents('p').addClass('center');
+
+  // Nav links animated scroll
+  $('#nav-projects').on('click', function(e) {
+    e.preventDefault();
+    $(window).scrollTo($('#projects'), 1000);
+  });
+  $('#nav-contact').on('click', function(e) {
+    e.preventDefault();
+    $(window).scrollTo($('#contact'), 1000);
+  });
+
+  // Blog posts all same height
+  var postMaxHeight = null;
+  $('#blog .height-align').each(function(i, item) {
+    var height = $(item).height();
+    if (height > postMaxHeight) {
+      postMaxHeight = height;
+    }
+  });
+  $('#blog .height-align').height(postMaxHeight);
+
+  // Project Tabs
+  if ($('#tabs').length != 0) {
+    var myTabs = tabs({
+      el: '#tabs',
+      tabNavigationLinks: '.project-tabs-nav-link',
+      tabContentContainers: '.project-tab'
+    });
+    myTabs.init();
+  }
+})(jQuery);

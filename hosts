@@ -1,0 +1,31 @@
+[admin]
+client
+
+[docker-nodes]
+swarm-manager1 ip_addr='172.16.2.21/24'
+swarm-manager2 ip_addr='172.16.2.22/24'
+swarm-manager3 ip_addr='172.16.2.23/24'
+swarm-worker1 ip_addr='172.16.2.24/24'
+swarm-worker2 ip_addr='172.16.2.25/24'
+swarm-worker3 ip_addr='172.16.2.26/24'
+
+[swarm-managers]
+swarm-manager1
+swarm-manager2
+swarm-manager3
+
+[swarm-workers]
+swarm-worker1
+swarm-worker2
+swarm-worker3
+
+[docker:children]
+docker-nodes
+swarm-managers
+swarm-workers
+
+[docker:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_connection=ssh
+ansible_user=root
+ansible_ssh_pass=Passw0rd!

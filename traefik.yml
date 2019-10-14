@@ -7,7 +7,7 @@
         curl -L https://raw.githubusercontent.com/rbales79/Docker-Swarm-Traefik/master/compose-traefik.yml -o compose-traefik.yml
         docker network create --driver=overlay traefik-public
         export EMAIL=rbales79@gmail.com
-        export DOMAIN=rlab.com
+        export DOMAIN=roybales.com
         export USERNAME=admin
         export PASSWORD=Passw0rd
         export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)

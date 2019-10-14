@@ -1,0 +1,769 @@
+[
+  {
+    "asset_type": "user",
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "root@localhost",
+    "is_superuser": true,
+    "last_login": "2019-10-13T19:29:27.307781Z"
+  },
+  {
+    "asset_type": "organization",
+    "name": "Default",
+    "asset_relation": {
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Project Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Inventory Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Credential Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Workflow Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Notification Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Job Template Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Auditor",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Member",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "credential",
+    "name": "Centos-Credentials",
+    "credential_type": "Machine",
+    "inputs": {
+      "password": "",
+      "username": "root"
+    },
+    "asset_relation": {
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "credential",
+    "name": "rbales79-github",
+    "organization": "Default",
+    "credential_type": "Source Control",
+    "inputs": {
+      "password": "",
+      "username": "rbales79"
+    },
+    "asset_relation": {
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "credential",
+    "name": "rlab-vcenter",
+    "organization": "Default",
+    "credential_type": "VMware vCenter",
+    "inputs": {
+      "host": "rvcenter.rlab.local",
+      "password": "",
+      "username": "administrator@vsphere.local"
+    },
+    "asset_relation": {
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "project",
+    "name": "Docker Swarm Master",
+    "scm_type": "git",
+    "scm_url": "https://github.com/rbales79/ansible-swarm-playbook.git",
+    "scm_branch": "master",
+    "credential": "rbales79-github",
+    "organization": "Default",
+    "scm_update_on_launch": true,
+    "asset_relation": {
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "schedules": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Update",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "project",
+    "name": "Traefik-Consul",
+    "scm_type": "git",
+    "scm_url": "https://github.com/rbales79/Docker-Swarm-Traefik.git",
+    "scm_branch": "master",
+    "credential": "rbales79-github",
+    "organization": "Default",
+    "scm_update_on_launch": true,
+    "asset_relation": {
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "schedules": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Update",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "inventory",
+    "name": "swarm",
+    "organization": "Default",
+    "variables": "---\nansible_connection: ssh",
+    "asset_relation": {
+      "host": [
+        {
+          "name": "swarm-manager1.rlab.local"
+        },
+        {
+          "name": "swarm-manager2.rlab.local",
+          "variables": "---\nansible_host: 172.16.2.22"
+        },
+        {
+          "name": "swarm-manager3.rlab.local",
+          "variables": "---\nansible_host: 172.16.2.23"
+        },
+        {
+          "name": "swarm-worker1.rlab.local",
+          "variables": "---\nansible_host: 172.16.2.24"
+        },
+        {
+          "name": "swarm-worker2.rlab.local",
+          "variables": "---\nansible_host: 172.16.2.25"
+        },
+        {
+          "name": "swarm-worker3.rlab.local",
+          "variables": "---\nansible_host: 172.16.2.26"
+        }
+      ],
+      "group": [
+        {
+          "name": "manager",
+          "sub_groups": [],
+          "hosts": [
+            "swarm-manager1.rlab.local",
+            "swarm-manager2.rlab.local",
+            "swarm-manager3.rlab.local"
+          ]
+        },
+        {
+          "name": "worker",
+          "sub_groups": [],
+          "hosts": [
+            "swarm-worker1.rlab.local",
+            "swarm-worker2.rlab.local",
+            "swarm-worker3.rlab.local"
+          ]
+        }
+      ],
+      "inventory_source": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Update",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Ad Hoc",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "inventory",
+    "name": "swarm2",
+    "organization": "Default",
+    "variables": "---",
+    "asset_relation": {
+      "host": [
+        {
+          "name": "swarm2-manager1"
+        },
+        {
+          "name": "swarm2-manager2"
+        },
+        {
+          "name": "swarm2-manager3"
+        },
+        {
+          "name": "swarm2-worker1"
+        },
+        {
+          "name": "swarm2-worker2"
+        },
+        {
+          "name": "swarm2-worker3"
+        }
+      ],
+      "group": [
+        {
+          "name": "manager",
+          "sub_groups": [],
+          "hosts": [
+            "swarm2-manager1",
+            "swarm2-manager2",
+            "swarm2-manager3"
+          ]
+        },
+        {
+          "name": "worker",
+          "sub_groups": [],
+          "hosts": [
+            "swarm2-worker1",
+            "swarm2-worker2",
+            "swarm2-worker3"
+          ]
+        }
+      ],
+      "inventory_source": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Update",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Ad Hoc",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "inventory",
+    "name": "vCenter",
+    "organization": "Default",
+    "variables": "---",
+    "asset_relation": {
+      "host": [],
+      "group": [],
+      "inventory_source": [
+        {
+          "name": "vcenter",
+          "source": "vmware",
+          "credential": "rlab-vcenter",
+          "update_on_launch": true,
+          "schedules": []
+        }
+      ],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Update",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Ad Hoc",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Use",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "Gitlab-ce",
+    "inventory": "swarm",
+    "project": "Traefik-Consul",
+    "playbook": "gitlab.yml",
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "open-fw",
+    "inventory": "swarm",
+    "project": "Traefik-Consul",
+    "playbook": "open-fwports.yml",
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "Portainer",
+    "inventory": "swarm",
+    "project": "Traefik-Consul",
+    "playbook": "portainer.yml",
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "Swarm Deploy Master",
+    "inventory": "swarm",
+    "project": "Docker Swarm Master",
+    "playbook": "swarm.yml",
+    "verbosity": 1,
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "Swarmprom",
+    "inventory": "swarm",
+    "project": "Traefik-Consul",
+    "playbook": "swarmprom.yml",
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "Traefik2wip",
+    "inventory": "swarm",
+    "project": "Traefik-Consul",
+    "playbook": "traefikwip.yml",
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "job_template",
+    "name": "Traefik-Consul",
+    "inventory": "swarm",
+    "project": "Traefik-Consul",
+    "playbook": "traefik.yml",
+    "use_fact_cache": true,
+    "become_enabled": true,
+    "allow_simultaneous": true,
+    "asset_relation": {
+      "survey_spec": {},
+      "notification_templates_error": [],
+      "notification_templates_success": [],
+      "extra_credentials": [],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [
+            "admin"
+          ],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  },
+  {
+    "asset_type": "workflow",
+    "name": "Deploy Swarm Services",
+    "inventory": 2,
+    "asset_relation": {
+      "survey_spec": {},
+      "workflow_nodes": [
+        {
+          "name": "node0",
+          "unified_job_type": "job",
+          "unified_job_name": "Portainer",
+          "success_nodes": [],
+          "failure_nodes": [],
+          "always_nodes": []
+        },
+        {
+          "name": "node1",
+          "unified_job_type": "job",
+          "unified_job_name": "Gitlab-ce",
+          "success_nodes": [],
+          "failure_nodes": [],
+          "always_nodes": []
+        },
+        {
+          "name": "node2",
+          "unified_job_type": "job",
+          "unified_job_name": "Traefik-Consul",
+          "success_nodes": [
+            "node0",
+            "node1",
+            "node3"
+          ],
+          "failure_nodes": [],
+          "always_nodes": []
+        },
+        {
+          "name": "node3",
+          "unified_job_type": "job",
+          "unified_job_name": "Swarmprom",
+          "success_nodes": [],
+          "failure_nodes": [],
+          "always_nodes": []
+        }
+      ],
+      "schedules": [],
+      "labels": [],
+      "roles": [
+        {
+          "name": "Admin",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Execute",
+          "user": [],
+          "team": []
+        },
+        {
+          "name": "Read",
+          "user": [],
+          "team": []
+        }
+      ]
+    }
+  }
+]

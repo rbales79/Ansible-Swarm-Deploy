@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<!-- saved from url=(0070)https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/ -->
+<html data-ol-has-click-handler=""><script async="" src="./Deploying Docker Swarm with Ansible_files/analytics.js.download"></script><script type="text/javascript">(function(){EventTarget.prototype.ol_originalAddEventListener=EventTarget.prototype.addEventListener,EventTarget.prototype.addEventListener=function(t,e){var n=this,r=arguments.length>2&&void 0!==arguments[2]&&arguments[2];this.ol_originalAddEventListener(t,e,r),"click"===t&&setTimeout(function(){!window.OL_NOT_LOGIN_PAGE&&n.setAttribute&&n.setAttribute("data-ol-has-click-handler","")},0)}})("")</script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Deploying Docker Swarm with Ansible - This End Out, LLC</title>
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Operations - Development - Infrastructure">
+
+    <link rel="canonical" href="https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/">
+
+    <!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="./Deploying Docker Swarm with Ansible_files/main.css">
+    <link rel="stylesheet" href="./Deploying Docker Swarm with Ansible_files/custom.css">
+    <!--[if lte IE 8]><link rel="stylesheet" href="/assets/css/ie8.css" /><![endif]-->
+
+    <link type="application/atom+xml" rel="alternate" href="https://thisendout.com/feed.xml" title="This End Out, LLC">
+  <script type="text/javascript">(function r(){window.OL_NOT_LOGIN_PAGE=!0})("")</script></head>
+  <body class="landing" data-ol-has-click-handler="">
+    <div id="page-wrapper">
+
+      <!-- Header -->
+        <header id="header">
+          <a id="nav-logo-link" href="https://thisendout.com/"><img id="nav-logo" src="./Deploying Docker Swarm with Ansible_files/teo-logo-nav-white.png"></a>
+          <nav id="nav">
+            <ul>
+              <li data-ol-has-click-handler="" style="white-space: nowrap;"><a id="nav-home" href="https://thisendout.com/" data-ol-has-click-handler="">Home</a></li>
+              <li data-ol-has-click-handler="" style="white-space: nowrap;"><a href="https://thisendout.com/blog" data-ol-has-click-handler="">Blog</a></li>
+              
+              <li data-ol-has-click-handler="" style="white-space: nowrap;"><a href="https://thisendout.com/#projects" data-ol-has-click-handler="">Projects</a></li>
+              <li data-ol-has-click-handler="" style="white-space: nowrap;"><a href="https://thisendout.com/#contact" data-ol-has-click-handler="">Contact</a></li>
+              
+              <li data-ol-has-click-handler="" style="white-space: nowrap;"><a href="https://github.com/thisendout" data-ol-has-click-handler=""><i class="nav-icon fa fa-github"></i><span class="nav-text">Github</span></a></li>
+              <li data-ol-has-click-handler="" style="white-space: nowrap;"><a href="https://twitter.com/thisendout" data-ol-has-click-handler=""><i class="nav-icon fa fa-twitter"></i><span class="nav-text">Twitter</span></a></li>
+            </ul>
+          </nav>
+        </header>
+
+      <!-- Main-->
+        <div id="blog" class="wrapper style1">
+          <section id="main" class="container">
+            <!-- Content -->
+            <section id="content" class="box post">
+              <header>
+                <h2>Deploying Docker Swarm with Ansible</h2>
+                <p>Create and manage a Docker Swarm cluster using Ansible.</p>
+                <ul class="meta">
+                  <li class="icon fa-pencil">
+                    <a href="https://twitter.com/cantrobot">
+                      John Patterson</a>
+                    
+                  </li>
+                  <li class="icon fa-clock-o">13 September 2016</li>
+                </ul>
+              </header>
+              <h1 id="deploying-docker-swarm-with-ansible">Deploying Docker Swarm with Ansible</h1>
+
+<p>The release of Docker <a href="https://blog.docker.com/2016/06/docker-1-12-built-in-orchestration/">1.12</a> introduced a number of improvements, one of which is a much simpler way to create a Swarm cluster from scratch. The simplified process is roughly as follows:</p>
+
+<ol>
+  <li>Initializing the first Swarm <a href="https://docs.docker.com/engine/swarm/key-concepts/#/node">manager</a> node (this will create a token used when joining other hosts).</li>
+  <li>Adding additional manager and <a href="https://docs.docker.com/engine/swarm/key-concepts/#/node">worker</a> nodes to the cluster using the token from the step above.</li>
+</ol>
+
+<p>Pretty simple, huh? While this certainly makes the process of manually bootstrapping a cluster easier, most of us are looking for ways to automate this process. In this guide, we’ll be using <a href="https://www.ansible.com/">Ansible</a> to fully automate the process of bootstrapping a new cluster as well as adding new hosts to the cluster using the same <a href="https://docs.ansible.com/ansible/playbooks.html">playbook</a>.</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>The only things you’ll need are hosts with a Docker daemon running and a functioning <a href="https://docs.ansible.com/ansible/intro_getting_started.html">Ansible environment</a> with your Docker hosts added to an <a href="https://docs.ansible.com/ansible/intro_inventory.html">inventory</a>. There is a lot of great <a href="https://docs.ansible.com/">documentation</a> for getting this setup for those new to Ansible.</p>
+
+<p>This playbook makes the assumption that you have certain hosts dedicated as Swarm managers belonging to an Ansible inventory group ‘manager’ and the rest as workers belonging to the Ansible inventory group named ‘worker’.</p>
+
+<h2 id="playbook">Playbook</h2>
+
+<p>I’ve called the playbook <code class="highlighter-rouge">swarm.yml</code>. Before we get into the weeds, the playbook is divided into the following high-level steps:</p>
+
+<ol>
+  <li>Determine the Swarm status of each manager node and classify them as either “operational” or needing “bootstrap”ed.</li>
+  <li>Do the same status check and classification for each worker node.</li>
+  <li>If no manager is running in Swarm mode, then it must be a new cluster needing bootstrapped. Take a single manager node and run the <code class="highlighter-rouge">docker swarm init</code> command, creating a new cluster.</li>
+  <li>Retrieve the manager and worker Swarm join tokens from a single, operational manager node.</li>
+  <li>Join any manager nodes that are not currently apart of the cluster using the manager join token.</li>
+  <li>Do the same for worker nodes using the worker join token.</li>
+</ol>
+
+<h3 id="determine-the-status-of-the-cluster">Determine the Status of the Cluster</h3>
+
+<p>From the CLI, you can determine if a Docker daemon is running in Swarm mode by running <code class="highlighter-rouge">docker info</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker info
+Containers: 0
+ Running: 0
+ Paused: 0
+ Stopped: 0
+... snip ...
+Swarm: inactive   # &lt;&lt;&lt; this
+</code></pre>
+</div>
+
+<p>Here we see that Docker is not running in Swarm mode and not apart of any cluster. When a Docker is running in Swarm mode, it will look like the following:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker info
+Containers: 0
+ Running: 0
+ Paused: 0
+ Stopped: 0
+... snip ...
+Swarm: active
+ NodeID: 7x3tddrjpmvcjllxxlujldck6
+ Is Manager: true
+ ClusterID: ajbtwndmq08i6usbau3fzsbhd
+ Managers: 1
+ Nodes: 1
+ Orchestration:
+  Task History Retention Limit: 5
+ Raft:
+  Snapshot Interval: 10000
+  Heartbeat Tick: 1
+  Election Tick: 3
+ Dispatcher:
+  Heartbeat Period: 5 seconds
+ CA Configuration:
+  Expiry Duration: 3 months
+ Node Address: 10.0.0.2
+</code></pre>
+</div>
+
+<p>The following play will run this command on each manager node to see if it is currently participating in the cluster and classify them into two groups: operational and bootstrap:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: manager
+  become: true
+  tasks:
+    - name: determine swarm status
+      shell: &gt;
+        docker info | egrep '^Swarm: ' | cut -d ' ' -f2
+      register: swarm_status
+
+    - name: create swarm_manager_operational group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_manager_operational
+      with_items: "{{ play_hosts }}"
+      when: "'active' in swarm_status.stdout_lines"
+      run_once: true
+
+    - name: create swarm_manager_bootstrap group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_manager_bootstrap
+      with_items: "{{ play_hosts }}"
+      when: "'active' not in swarm_status.stdout_lines"
+      run_once: true
+</code></pre>
+</div>
+
+<p>Here the <a href="https://docs.ansible.com/ansible/add_host_module.html"><code class="highlighter-rouge">add_host</code></a> module is used to create ad hoc Ansible groups that will be used in later plays performing tasks/roles specific to that group. I like this pattern over a series of <code class="highlighter-rouge">when</code> statements in a <a href="https://docs.ansible.com/ansible/playbooks_roles.html">role</a> since you get to operate based on state facts about each group. For example, we know the hosts in the <code class="highlighter-rouge">swarm_manager_operational</code> group are running in Swarm mode because we determined their state using the <code class="highlighter-rouge">docker info</code> command.</p>
+
+<p>Next, we are going to do the exact same thing for the worker hosts:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: worker
+  become: true
+  tasks:
+    - name: determine swarm status
+      shell: &gt;
+        docker info | egrep '^Swarm: ' | cut -d ' ' -f2
+      register: swarm_status
+
+    - name: create swarm_worker_operational group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_worker_operational
+      with_items: "{{ play_hosts }}"
+      when: "'active' in swarm_status.stdout_lines"
+      run_once: true
+
+    - name: create swarm_worker_bootstrap group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_worker_bootstrap
+      with_items: "{{ play_hosts }}"
+      when: "'active' not in swarm_status.stdout_lines"
+      run_once: true
+</code></pre>
+</div>
+
+<p>Notice that the only thing that has changed are the hosts we are targetting and the group we are putting them into. They are placed in a different group so we can join them to the cluster using a different token.</p>
+
+<h3 id="optionally-bootstrap-a-cluster">Optionally Bootstrap a Cluster</h3>
+
+<p>When all of the managers are not running in Swarm mode (<code class="highlighter-rouge">Swarm: inactive</code>), then a new cluster needs to be created. The <code class="highlighter-rouge">init</code> command only needs to be run once on a single node. If you try and run it again in an active cluster, it will fail as the node is already running in Swarm mode.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: swarm_manager_bootstrap[0]
+  become: true
+  tasks:
+    - name: initialize swarm cluster
+      shell: &gt;
+        docker swarm init
+        --advertise-addr={{ swarm_iface | default('eth0') }}:2377
+      when: "'swarm_manager_operational' not in groups"
+      register: bootstrap_first_node
+
+    - name: add initialized host to swarm_manager_operational group
+      add_host:
+        hostname: "{{ play_hosts[0] }}"
+        groups: swarm_manager_operational
+      when: bootstrap_first_node | changed
+</code></pre>
+</div>
+
+<p>This play begins by targeting the first node in the <code class="highlighter-rouge">swarm_manager_bootstrap</code> group. The first task runs the init command when the <code class="highlighter-rouge">swarm_manager_operational</code> group is empty, or put literally, not present in the available Ansible groups. The <code class="highlighter-rouge">bootstrap_first_node</code> variable is registered specifically for the next task. If the init task is run and a new cluster is bootstrapped (<code class="highlighter-rouge">bootstrap_first_node | changed</code>), then add that node into the group of operational Swarm managers (<code class="highlighter-rouge">swarm_manager_operational</code>).</p>
+
+<p>This play is idempotent, meaning these will only execute when there are no hosts in the <code class="highlighter-rouge">swarm_manager_operational</code> group.</p>
+
+<h3 id="retrieve-the-join-tokens">Retrieve the Join Tokens</h3>
+
+<p>The next play also only targets a single node in the <code class="highlighter-rouge">swarm_manager_operational</code> group to retrieve and register the manager and worker tokens required when joining a node to the cluster. Later in the playbook, we will need easy access to the IP address of one of the manager hosts, so we can store that information by creating another ad hoc group with just the manager’s IP (there are certainly other ways of storing and accessing a single manager’s IP address, I just think this is easier).</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: swarm_manager_operational[0]
+  become: true
+  vars:
+    iface: "{{ swarm_iface | default('eth0') }}"
+  tasks:
+    - name: retrieve swarm manager token
+      shell: docker swarm join-token -q manager
+      register: swarm_manager_token
+
+    - name: retrieve swarm worker token
+      shell: docker swarm join-token -q worker
+      register: swarm_worker_token
+
+    - name: populate list of manager ips
+      add_host:
+        hostname: "{{ hostvars[item]['ansible_' + iface]['ipv4']['address'] }}"
+        groups: swarm_manager_ips
+      with_items: "{{ play_hosts }}"
+</code></pre>
+</div>
+
+<h3 id="join-manager-nodes">Join Manager Nodes</h3>
+
+<p>The manager hosts that are not running in Swarm mode (<code class="highlighter-rouge">swarm_manager_bootstrap</code> group) will now be added to the cluster using the Swarm manager token.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: swarm_manager_bootstrap:!swarm_manager_operational
+  become: true
+  vars:
+    token: "{{ hostvars[groups['swarm_manager_operational'][0]]['swarm_manager_token']['stdout'] }}"
+  tasks:
+    - name: join manager nodes to cluster
+      shell: &gt;
+        docker swarm join
+        --advertise-addr={{ swarm_iface | default('eth0') }}:2377
+        --token={{ token }}
+        {{ groups['swarm_manager_ips'][0] }}:2377
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">hosts</code> line may look a little odd since you would expect that any hosts in the <code class="highlighter-rouge">swarm_manager_operational</code> would not be in the <code class="highlighter-rouge">swarm_manager_bootstrap</code>. The reason this exclusion exists is to prevent the case when creating a new cluster, a host is first classified as needing bootstrapped and after having started a new cluster, it gets added to the <code class="highlighter-rouge">swarm_manager_operational</code> group.</p>
+
+<p>The manager token is then accessed and used for joining the manager nodes to the cluster using the <code class="highlighter-rouge">docker swarm join</code> command.</p>
+
+<h3 id="join-worker-nodes">Join Worker Nodes</h3>
+
+<p>The final play looks very similar to the previous, except targeting the worker nodes and joining using the worker token.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: swarm_worker_bootstrap
+  become: true
+  vars:
+    token: "{{ hostvars[groups['swarm_manager_operational'][0]]['swarm_worker_token']['stdout'] }}"
+  tasks:
+    - name: join worker nodes to cluster
+      shell: &gt;
+        docker swarm join
+        --advertise-addr={{ swarm_iface | default('eth0') }}:2377
+        --token={{ token }}
+        {{ groups['swarm_manager_ips'][0] }}:2377
+</code></pre>
+</div>
+
+<h2 id="bonus-points-docker-info-facts">Bonus Points: Docker Info Facts!</h2>
+
+<p>Using the shell module and searching for a value in the STDOUT works in a pinch, but may be unreliable, especially if the output format ever changes. Instead, we can make use of an Ansible <a href="https://docs.ansible.com/ansible/modules.html">modules</a> to inject the Docker info as facts into the environment. This gives much greater control and predictability over how information is evaluated later.</p>
+
+<p>Previously we used the following shell statement for determining if hosts are running in Swarm mode:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: manager
+  become: true
+  tasks:
+    - name: determine swarm status
+      shell: docker info | egrep '^Swarm: ' | cut -d ' ' -f2
+      register: swarm_status
+</code></pre>
+</div>
+
+<p>We can instead use a module to inject the same Docker info as facts (in dictionary form):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c">#!/usr/bin/env python</span>
+<span class="c"># Copyright 2016, This End Out, LLC.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c">#</span>
+<span class="c">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c">#</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+
+<span class="n">DOCUMENTATION</span> <span class="o">=</span> <span class="s">"""
+---
+module: docker_info_facts
+short_description:
+    - A module for injecting Docker info as facts.
+description:
+    - A module for injecting Docker info as facts.
+author: nextrevision
+"""</span>
+
+<span class="n">EXAMPLES</span> <span class="o">=</span> <span class="s">"""
+- name: load docker info facts
+  docker_info_facts:
+"""</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">docker</span> <span class="kn">import</span> <span class="n">Client</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">docker_lib_missing</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">docker_lib_missing</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">_get_docker_info</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cli</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cli</span><span class="o">.</span><span class="n">info</span><span class="p">(),</span> <span class="bp">False</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">AnsibleModule</span><span class="p">(</span>
+        <span class="n">argument_spec</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+        <span class="n">supports_check_mode</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">docker_lib_missing</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">"Could not load docker python library; please install docker-py"</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">fail_json</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">info</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">_get_docker_info</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">fail_json</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">module</span><span class="o">.</span><span class="n">exit_json</span><span class="p">(</span>
+        <span class="n">changed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">ansible_facts</span><span class="o">=</span><span class="p">{</span><span class="s">'docker_info'</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
+
+
+<span class="kn">from</span> <span class="nn">ansible.module_utils.basic</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<p>This module makes use of the <code class="highlighter-rouge">docker-py</code> library to programmatically access the Docker info and inject it as a dictionary fact. Using this module, our play will now look like:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>- hosts: manager
+  become: true
+  tasks:
+    - name: load docker info as facts
+      docker_info_facts:
+
+    - name: create swarm_manager_operational group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_manager_operational
+      with_items: "{{ play_hosts }}"
+      when: "'{{ hostvars[item]['docker_info']['Swarm']['LocalNodeState'] }}' == 'active'"
+      run_once: true
+
+    - name: create swarm_manager_bootstrap group
+      add_host:
+        hostname: "{{ item }}"
+        groups: swarm_manager_bootstrap
+      with_items: "{{ play_hosts }}"
+      when: "'{{ hostvars[item]['docker_info']['Swarm']['LocalNodeState'] }}' != 'active'"
+      run_once: true
+</code></pre>
+</div>
+
+<p>Now we have a much more reliable way of determining the state of our hosts. See the repo below for the full playbook and updates using this module.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This playbook is idemptotent and can be run to initially bootstrap a cluster as well as add capacity to it. When a new host appears in your inventory under either the <code class="highlighter-rouge">manager</code> or <code class="highlighter-rouge">worker</code> group, it will be joined to the cluster.</p>
+
+<p>The full project files can be found at <a href="https://github.com/nextrevision/ansible-swarm-playbook">github.com/nextrevision/ansible-swarm-playbook</a>.</p>
+
+            </section>
+          </section>
+        </div>
+      <!-- Footer -->
+        <footer id="footer">
+          <!--ul class="menu">
+            <li><a href="/about">About</a></li>
+            <li><a href="https://github.com/thisendout">Github</a></li>
+            <li><a href="https://twitter.com/thisendout">Twitter</a></li>
+          </ul-->
+          <div class="copyright">
+            © This End Out, LLC. All rights reserved.
+          </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+      <script src="./Deploying Docker Swarm with Ansible_files/jquery.min.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/jquery.dropotron.min.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/jquery.scrollgress.min.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/jquery.scrollTo.min.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/skel.min.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/util.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/tabs.js.download"></script>
+      <!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
+      <script src="./Deploying Docker Swarm with Ansible_files/main.js.download"></script>
+      <script src="./Deploying Docker Swarm with Ansible_files/custom.js.download"></script>
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-63980836-6', 'auto');
+        ga('send', 'pageview');
+      </script>
+
+  
+
+
+<div id="navButton"><a href="https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/#navPanel" class="toggle"></a></div><div id="navPanel" data-ol-has-click-handler=""><nav><a class="link depth-0" href="https://thisendout.com/" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><span class="indent-0"></span>Home</a><a class="link depth-0" href="https://thisendout.com/blog" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><span class="indent-0"></span>Blog</a><a class="link depth-0" href="https://thisendout.com/#projects" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><span class="indent-0"></span>Projects</a><a class="link depth-0" href="https://thisendout.com/#contact" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><span class="indent-0"></span>Contact</a><a class="link depth-0" href="https://github.com/thisendout" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><span class="indent-0"></span>Github</a><a class="link depth-0" href="https://twitter.com/thisendout" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><span class="indent-0"></span>Twitter</a></nav></div></body></html>
