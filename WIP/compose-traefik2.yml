@@ -1,0 +1,64 @@
+version: "3.3"
+
+services:
+
+  traefik:
+    image: traefik:latest
+    container_name: "traefik"
+    command: >
+      # --log.level=DEBUG
+      --api.insecure=true
+      --providers.docker=true
+      --providers.docker.exposedbydefault=false
+      --entrypoints.web.address=:80
+      --entrypoints.websecure.address=:443
+      --api
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.entrypoints=web
+      - traefik.http.routers.traefik.rule=Host(`traefik.rlab.com`)
+      #- traefik.http.routers.traefik.middlewares=redirect@file
+      #- traefik.http.routers.traefik_secure.entrypoints=web-secure
+      #- traefik.http.routers.traefik_secure.rule=Host(`traefik.rlab.com`)
+      #- traefik.http.routers.traefik_secure.tls.certresolver=letsencrypt
+      # Change // Fix for RC3/RC4
+      - traefik.http.routers.traefik.service=api@internal
+      # Old // RC2
+      #- traefik.http.services.traefik.loadbalancer.server.port=8080
+      - traefik.docker.network=traefik-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./traefik.toml:/etc/traefik/traefik.toml
+      # Configuration for FILE Provider
+      #- ./provider_file.toml:/etc/traefik/provider_file.toml
+      #- ./a2cme.json:/acme.json
+    networks:
+      - default
+      - traefik-proxy
+
+  portainer:
+    image: portainer/portainer
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer_data:/data
+    labels:
+      # Explicitly tell Traefik to expose this container
+      - traefik.enable=true
+      - traefik.port=9000
+      # Explicitely tell Watchtower to ignore this container
+      #- com.centurylinklabs.watchtower.enable=false
+      - traefik.http.routers.portainer.rule=Host(`portainer.rlab.com`)
+      #- traefik.http.routers.portainer.tls.certresolver=leresolver
+      - traefik.http.routers.portainer.entrypoints=web
+      - traefik.docker.network=traefik-proxy
+    networks:
+      - traefik-proxy
+
+networks:
+  traefik-proxy:
+    external: true
