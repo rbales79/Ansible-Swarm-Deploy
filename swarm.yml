@@ -64,7 +64,7 @@
     - name: initialize swarm cluster
       shell: >-
         docker swarm init
-        --advertise-addr={{ ['ansible_default_ipv4']['address'] }}:2377
+        --advertise-addr={{ hostvars['ansible_default_ipv4']['address'] }}:2377
       when: "'swarm_manager_operational' not in groups"
       register: bootstrap_first_node
 
