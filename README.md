@@ -1,4 +1,5 @@
 # Ansible Swarm Playbook
+#You should do this with Kubernetes!
 
 Playbook for creating/managing a Docker Swarm cluster (requires Docker >= 1.12).
 Companion files to the following post: https://thisendout.com/2016/09/13/deploying-docker-swarm-with-ansible/
