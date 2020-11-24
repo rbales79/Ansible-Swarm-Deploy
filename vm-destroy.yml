@@ -13,6 +13,7 @@
       name: web02
       cluster: rlab-cluster01
       state: absent
+      force: yes
     delegate_to: localhost
     register: facts
   - name: test02
@@ -24,6 +25,7 @@
       name: web03
       cluster: rlab-cluster01
       state: absent
+      force: yes
     delegate_to: localhost
     register: facts
   - name: test03
@@ -35,5 +37,6 @@
       name: testvm_2
       cluster: rlab-cluster01
       state: absent
+      force: yes
     delegate_to: localhost
     register: facts
