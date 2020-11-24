@@ -6,7 +6,6 @@ folder: ansible-vms
 datastore: esx01-ds
 vmtemplate: centos7-base
 datacenter: rlab-datacenter01
-customization_spec: <your customization spec>
 vmcluster: rlab-cluster01
 networks: mgmt-trunk
 servers:
