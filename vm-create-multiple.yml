@@ -11,12 +11,13 @@
       hostname: "{{ vcenter_hostname }}"
       username: "{{ username }}"
       password: "{{ password }}"
-      validate_certs: no      
+      validate_certs: False      
       folder: "{{ folder }}"
       template: "{{ vmtemplate }}"
       name: "{{ item }}"
       cluster: "{{ vmcluster }}"
-      datacenter: CloudLocal
+      datacenter: "{{ datacenter }}"
+      networks:
+      - name: "{{ networks }}"	  
       state: poweredon
-      customization_spec: "{{ customization_spec }}"
     with_items: "{{ servers }}"
