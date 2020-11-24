@@ -12,5 +12,5 @@ disk_size: 40
 memory: 8
 cpus: 4
 servers:
-  - test19_01
-  - test19_02
+  - test19_03
+  - test19_04
