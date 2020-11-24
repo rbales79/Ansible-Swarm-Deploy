@@ -1,0 +1,14 @@
+---
+vcenter_hostname: 172.16.1.5
+username: administrator@vsphere.local
+password: VMware1!
+folder: ansible-vms
+datastore: esx01-ds
+vmtemplate: centos7-base
+datacenter: rlab-datacenter01
+customization_spec: <your customization spec>
+vmcluster: rlab-cluster01
+networks: mgmt-trunk
+servers:
+  - test19_01
+  - test19_02
