@@ -26,7 +26,7 @@
       - memory_gb: "{{ memory }}"
       - num_cpus: "{{ cpus }}"
       - scsi: paravirtual
-      -linked_clone: "{{ linked_clone }}" 
+      linked_clone: "{{ linked_clone }}" 
       state: poweredon
     with_items: "{{ servers }}"
 
