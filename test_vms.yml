@@ -8,14 +8,9 @@ vmtemplate: centos7-linkedclone
 datacenter: rlab-datacenter01
 vmcluster: rlab-cluster01
 networks: mgmt-trunk
-disk:
-- size_gb: 20
-  type: thin
-  datastore: esx01-ds
-hardware:
-  memory_mb: 512
-  num_cpus: 4
-  scsi: paravirtual
+disk_size: 40
+memory: 8
+cpus: 4
 servers:
   - test19_01
   - test19_02
