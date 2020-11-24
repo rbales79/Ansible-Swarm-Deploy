@@ -12,7 +12,7 @@
       validate_certs: False
       name: testvm_2
       template: centos7-base
-      datacenter: /rlab-datacenter01
-      folder: /rlab-datacenter01/ansible-vms
+      datacenter: rlab-datacenter01
+      folder: ansible-vms
       state: poweredon
       wait_for_ip_address: yes
