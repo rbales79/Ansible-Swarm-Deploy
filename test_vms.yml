@@ -9,7 +9,7 @@ datacenter: rlab-datacenter01
 vmcluster: rlab-cluster01
 networks: mgmt-trunk
 disk_size: 40
-memory: 8
+memory: 8196
 cpus: 4
 linked_clone: True
 servers:
