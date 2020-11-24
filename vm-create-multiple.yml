@@ -6,8 +6,8 @@
     test_vms.yml
   tasks: 
   - name: Clone multiple VMs from template
-    module: vmware_guest  
     local_action:
+      module: vmware_guest
       hostname: "{{ vcenter_hostname }}"
       username: "{{ username }}"
       password: "{{ password }}"
