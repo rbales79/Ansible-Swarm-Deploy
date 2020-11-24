@@ -27,6 +27,5 @@
       num_cpus: "{{ cpus }}"
       scsi: paravirtual
       state: poweredon
-    loop: "{{ servers }}"
-    async: 10
-    poll: 0
+    with_items "{{ servers }}"
+
