@@ -1,0 +1,27 @@
+
+---
+- name: Clone multiple VMs
+  hosts: localhost 
+  gather_facts: false
+  vars_files: 
+    test_vms.yml
+  tasks: 
+  - name: Clone multiple VMs from template
+    local_action:
+      module: vmware_guest
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      validate_certs: False      
+      folder: "{{ folder }}"
+      template: "{{ vmtemplate }}"
+      name: "{{ item }}"
+      cluster: "{{ vmcluster }}"
+      datacenter: "{{ datacenter }}"
+      networks:
+      - name: "{{ networks }}"	  
+      state: absent
+      force: yes
+    loop: "{{ servers }}"
+    async: 10
+    poll: 0
