@@ -18,7 +18,9 @@
       cluster: "{{ vmcluster }}"
       datacenter: "{{ datacenter }}"
       networks:
-      - name: "{{ networks }}"	  
+      - name: "{{ networks }}"
+      disk: "{{ disk }}"
+      Hardware: "{{ hardware }}"
       state: poweredon
     loop: "{{ servers }}"
     async: 10
