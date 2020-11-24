@@ -23,9 +23,8 @@
       - size_gb: "{{ disk_size }}"
       type: thin
       hardware:
-      - memory_gb: "{{ memory }}"
+      - memory_mb: "{{ memory }}"
       - num_cpus: "{{ cpus }}"
-      - scsi: paravirtual
       linked_clone: "{{ linked_clone }}" 
       state: poweredon
     with_items: "{{ servers }}"
