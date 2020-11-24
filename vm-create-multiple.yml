@@ -7,7 +7,6 @@
   tasks: 
   - name: Clone multiple VMs from template
     local_action:
-      module: vmware_guest
       hostname: "{{ vcenter_hostname }}"
       username: "{{ username }}"
       password: "{{ password }}"
