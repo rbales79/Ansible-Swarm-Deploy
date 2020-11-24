@@ -20,4 +20,6 @@
       networks:
       - name: "{{ networks }}"	  
       state: poweredon
-    with_items: "{{ servers }}"
+    loop: "{{ servers }}"
+    async: 10
+    poll: 0
