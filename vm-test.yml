@@ -31,3 +31,30 @@
       state: poweredon
       wait_for_ip_address: yes
     delegate_to: localhost
+  - name: test02
+    vmware_guest:
+      hostname: 172.16.1.5
+      username: administrator@vsphere.local
+      password: VMware1!
+      validate_certs: False
+      name: web03
+      template: centos7-base
+      datacenter: rlab-datacenter01
+      folder: ansible-vms
+      cluster: rlab-cluster01
+      datastore: esx01-ds
+      networks:
+      - name: mgmt-trunk
+        ip: 172.16.1.201
+        netmask: 255.255.255.0
+        gateway: 172.16.1.1
+        type: static
+        dns_servers: 172.16.1.1
+      customization:
+        hostname: "web03"
+        dns_servers:
+        - 172.16.1.1
+        - 192.168.88.1
+      state: poweredon
+      wait_for_ip_address: yes
+    delegate_to: localhost
