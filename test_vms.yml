@@ -4,13 +4,14 @@ username: administrator@vsphere.local
 password: VMware1!
 folder: ansible-vms
 datastore: esx01-ds
-vmtemplate: centos7-base
+vmtemplate: centos7-linkedclone
 datacenter: rlab-datacenter01
 vmcluster: rlab-cluster01
 networks: mgmt-trunk
 disk_size: 40
 memory: 8
 cpus: 4
+linked_clone: True
 servers:
   - test19_03
   - test19_04
