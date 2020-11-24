@@ -1,0 +1,39 @@
+---
+- name: Remove a VM
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: test01
+    vmware_guest:
+      hostname: 172.16.1.5
+      username: administrator@vsphere.local
+      password: VMware1!
+      validate_certs: False
+      name: web02
+      cluster: rlab-cluster01
+      state: absent
+    delegate_to: localhost
+    register: facts
+  - name: test02
+    vmware_guest:
+      hostname: 172.16.1.5
+      username: administrator@vsphere.local
+      password: VMware1!
+      validate_certs: False
+      name: web03
+      cluster: rlab-cluster01
+      state: absent
+    delegate_to: localhost
+    register: facts
+  - name: test03
+    vmware_guest:
+      hostname: 172.16.1.5
+      username: administrator@vsphere.local
+      password: VMware1!
+      validate_certs: False
+      name: testvm_2
+      cluster: rlab-cluster01
+      state: absent
+    delegate_to: localhost
+    register: facts
