@@ -21,7 +21,7 @@
       - name: "{{ networks }}"
       disk:
       - size_gb: "{{ disk_size }}"
-      type: thin
+      - type: thin
       hardware:
       - memory_mb: "{{ memory }}"
       - num_cpus: "{{ cpus }}"
