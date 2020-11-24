@@ -19,8 +19,13 @@
       datacenter: "{{ datacenter }}"
       networks:
       - name: "{{ networks }}"
-      disk: "{{ disk }}"
-      Hardware: "{{ hardware }}"
+      disk:
+      - size_gb: "{{ disk_size }}"
+      type: thin
+      hardware:
+      memory_gb: "{{ memory }}"
+      num_cpus: "{{ cpus }}"
+      scsi: paravirtual
       state: poweredon
     loop: "{{ servers }}"
     async: 10
