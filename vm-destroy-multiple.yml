@@ -23,5 +23,5 @@
       state: absent
       force: yes
     loop: "{{ servers }}"
-    async: 10
+    async: 60
     poll: 0
