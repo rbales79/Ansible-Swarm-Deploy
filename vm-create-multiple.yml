@@ -25,7 +25,7 @@
         type: thin
       hardware:
         memory_mb: "{{ memory | default(8196) }}"
-        num_cpus: "{{ cpus default(2) }}"
+        num_cpus: "{{ cpus | default(2) }}"
         scsi: paravirtual
       customization:
         dns_servers:
