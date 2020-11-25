@@ -37,6 +37,6 @@
       state: poweredon
       wait_for_ip_address: True
     loop: "{{ servers }}"
-    async: 60
-    poll: 10
+    async: 120
+    poll: 30
     delegate_to: localhost
