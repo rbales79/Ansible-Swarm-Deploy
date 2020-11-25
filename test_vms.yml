@@ -16,5 +16,7 @@ memory: 8196
 cpus: 4
 linked_clone: True
 servers:
-  - test19_03
-  - test19_04
+  - test_01
+  - test_02
+  - test_03
+  - test_04
