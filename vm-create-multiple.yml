@@ -31,11 +31,10 @@
         dns_servers:
         - '{{ guest_dns_server }}'
         domain : '{{ guest_domain_name }}'
-        hostname: '{{ inventory_hostname }}' 
+        #hostname: '{{ inventory_hostname }}' 
       linked_clone: "{{ linked_clone }}" 
       snapshot_src: "{{ snapshot_name }}"
       state: poweredon
       wait_for_ip_address: True
     with_items: "{{ servers }}"
     delegate_to: localhost
-
