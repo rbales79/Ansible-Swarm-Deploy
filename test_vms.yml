@@ -8,6 +8,9 @@ vmtemplate: centos7-linkedclone
 datacenter: rlab-datacenter01
 vmcluster: rlab-cluster01
 networks: mgmt-trunk
+guest_dns_server: 172.16.1.1
+guest_domain_name: rlab.local
+snapshot_name: linked-clone-snap
 disk_size: 40
 memory: 8196
 cpus: 4
