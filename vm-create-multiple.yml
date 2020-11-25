@@ -14,6 +14,7 @@
       validate_certs: False      
       folder: "{{ folder }}"
       template: "{{ vmtemplate }}"
+      datastore: "{{ datastore }}"
       name: "{{ item }}"
       cluster: "{{ vmcluster }}"
       datacenter: "{{ datacenter }}"
