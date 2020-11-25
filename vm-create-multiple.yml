@@ -21,11 +21,11 @@
       networks:
       - name: "{{ networks }}"
       disk:
-      - size_gb: "{{ disk_size }}"
+      - size_gb: "{{ disk_size | default(20) }}"
         type: thin
       hardware:
-        memory_mb: "{{ memory }}"
-        num_cpus: "{{ cpus }}"
+        memory_mb: "{{ memory | default(8196) }}"
+        num_cpus: "{{ cpus default(2) }}"
         scsi: paravirtual
       linked_clone: "{{ linked_clone }}" 
       state: poweredon
