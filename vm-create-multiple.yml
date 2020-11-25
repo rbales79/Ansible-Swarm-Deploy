@@ -36,5 +36,7 @@
       snapshot_src: "{{ snapshot_name }}"
       state: poweredon
       wait_for_ip_address: True
-    with_items: "{{ servers }}"
+    loop: "{{ servers }}"
+    async: 10
+    poll: 0
     delegate_to: localhost
