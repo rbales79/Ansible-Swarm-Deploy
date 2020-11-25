@@ -38,5 +38,5 @@
       wait_for_ip_address: True
     loop: "{{ servers }}"
     async: 60
-    poll: 0
+    poll: 10
     delegate_to: localhost
